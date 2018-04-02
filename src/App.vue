@@ -18,7 +18,7 @@ export default {
             flexRow: false,
             // 默认所有页面有head
             noHead: false,
-            noHeads: ["home"]
+            noHeads: [] //["home"]
         };
     },
     created() {
