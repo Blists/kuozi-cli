@@ -53,97 +53,28 @@ a {
     transform: scaleY(0.5);
 }
 
-.hr-10 {
-    display: block;
-    height: 10px;
-    background: @hr;
-}
-
-._hr-border {
+.hr-top {
+    position: relative;
     &:before {
         content: "";
         position: absolute;
         top: 0;
         width: 100%;
-        border-top: 1px solid @hr;
-        transform: scaleY(0.5);
+        height: 1px;
+        background: linear-gradient(to bottom, #bfbfbf, #bfbfbf 50%, rgba(0, 0, 0, 0) 50%) no-repeat;
     }
+}
+
+.hr-bottom {
+    position: relative;
     &:after {
         content: "";
         position: absolute;
         bottom: 0;
         width: 100%;
-        border-top: 1px solid @hr;
-        transform: scaleY(0.5);
+        height: 1px;
+        background: linear-gradient(to top, #bfbfbf, #bfbfbf 50%, rgba(0, 0, 0, 0) 50%) no-repeat;
     }
-}
-
-.hr-border-10 {
-    position: relative;
-    display: block;
-    height: 10px;
-    background: @hr;
-    ._hr-border;
-}
-
-.hr-15 {
-    display: block;
-    height: 15px;
-    background: @hr;
-}
-
-.hr-border-15 {
-    display: block;
-    height: 15px;
-    background: @hr;
-    ._hr-border;
-}
-
-.hr-20 {
-    display: block;
-    height: 20px;
-    background: @hr;
-}
-
-.hr-border-20 {
-    display: block;
-    height: 20px;
-    background: @hr;
-    ._hr-border;
-}
-
-.hr-30 {
-    display: block;
-    height: 30px;
-    background: @hr;
-}
-
-.hr-border-30 {
-    display: block;
-    height: 30px;
-    background: @hr;
-    ._hr-border;
-}
-
-.border-top {
-    border-top: 1px solid @hr;
-}
-
-.border-bottom {
-    border-bottom: 1px solid @hr;
-}
-
-.border-left {
-    border-left: 1px solid @hr;
-}
-
-.border-right {
-    border-right: 1px solid @hr;
-}
-
-.border-tb {
-    border: 1px @hr;
-    border-style: solid none;
 }
 
 .ellipsis {
@@ -168,10 +99,6 @@ a {
     -webkit-overflow-scrolling: touch;
 }
 
-.input-more {
-    padding-bottom: 6.666667rem;
-}
-
 .text-center {
     text-align: center;
 }
@@ -186,8 +113,8 @@ a {
 }
 
 .no-more {
-    height: .66666667rem;
-    line-height: .66666667rem;
+    height: 100px;
+    line-height: 100px;
     text-align: center;
     color: @999;
 }
@@ -236,7 +163,7 @@ a {
         width: 100%;
         height: 100%;
         background: black;
-        opacity: .5;
+        opacity: 0.5;
     }
 }
 
