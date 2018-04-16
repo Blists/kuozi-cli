@@ -283,11 +283,11 @@ gulp.task("build", ["cp"], function(cb) {
 // sftp上传开发环境
 gulp.task("sftp", ["choose-env"], function() {
     var ssh = require("./config/ssh");
-    return gulp.src("./dist/**").pipe(sftp(ssh[process.env.NODE_ENV]));
+    return gulp.src("./dist/**").pipe(sftp(ssh[process.env.PROJECT][process.env.NODE_ENV]));
 });
 
 //发布
 gulp.task("publish", ["build"], function() {
     var ssh = require("./config/ssh");
-    return gulp.src("./dist/**").pipe(sftp(ssh[process.env.NODE_ENV]));
+    return gulp.src("./dist/**").pipe(sftp(ssh[process.env.PROJECT][process.env.NODE_ENV]));
 });
