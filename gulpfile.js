@@ -300,7 +300,7 @@ gulp.task("dev", ["replace-routers"], function() {
  * gulp+webpack Build
  */
 //删除dist
-gulp.task("clean", ["split"], function() {
+gulp.task("clean", ["replace-routers"], function() {
     return gulp
         .src("./dist", {
             read: false
