@@ -2,7 +2,9 @@
     <div class="app" :class="{'no-head':noHead}">
         <transition :name="transition" @afterLeave="afterLeave">
             <!-- <keep-alive> -->
-            <router-view></router-view>
+            <navigation>
+                <router-view></router-view>
+            </navigation>
             <!-- </keep-alive> -->
         </transition>
         <mt-spinner v-if="spinner" type="double-bounce" class="spinner" :color="color" :size="30"></mt-spinner>
@@ -15,26 +17,21 @@ export default {
     data() {
         return {
             color: STRING.INFO,
-            flexRow: false,
             // 默认所有页面有head
             noHead: false,
             noHeads: [] //["home"]
         };
     },
     created() {
-        // 监听浏览器返回事件
+        sessionStorage.removeItem("VUE_NAVIGATION");
         this.$store.commit("spinner", false);
-        let to = { name: "index", query: {} };
         let path = window.location.hash.replace("#", "");
-        if (path.match("/login")) {
-            to.query.path = decodeURIComponent(path.replace("/login?path=", ""));
-        } else if (path.match("/index")) {
-            to.query.path = decodeURIComponent(path.replace("/index?path=", ""));
-        } else {
-            to.query.path = decodeURIComponent(path);
+        if (path.match("/login") || path.match("/index")) {
+            sessionStorage.setItem("$path", "");
         }
         this.$store.commit("transition", "");
-        this.$router.replace(to);
+        sessionStorage.setItem("$path", path);
+        this.$router.replace({ name: "index" });
     },
     methods: {
         afterLeave() {
@@ -62,16 +59,15 @@ export default {
 <style lang="less">
 @import "./style/variables.less";
 // 页面过渡时间
-@time: 500ms;
+@time: 400ms;
 .app {
     height: 100%;
-    overflow: hidden;
-    width: 100%;
-    background: linear-gradient(to bottom, @info, @info) no-repeat;
-    background-size: 100% @head-height + @ztl1;
-    &.no-head {
-        background: none;
-    }
+    // width: 100%;
+    // background: linear-gradient(to bottom, @info, @info) no-repeat;
+    // background-size: 100% @head-height + @ztl1;
+    // &.no-head {
+    //     background: none;
+    // }
     > div {
         width: 100%;
     }
@@ -80,7 +76,8 @@ export default {
 .pop-out-leave-active,
 .pop-in-enter-active,
 .pop-in-leave-active {
-    position: absolute;
+    position: fixed;
+    top: 0;
     width: 100%;
     height: 100%;
     will-change: transform;

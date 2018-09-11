@@ -45,6 +45,7 @@
         "http-proxy-middleware": "^0.17.4",
         "less": "^2.7.2",
         "less-loader": "^4.0.3",
+        "pipe-concat": "0.0.3",
         "postcss-loader": "^2.0.1",
         "style-loader": "^0.17.0",
         "uglifyjs-webpack-plugin": "^1.0.0-beta.2",
@@ -59,13 +60,11 @@
     "dependencies": {
         "axios": "^0.16.1",
         "babel-polyfill": "^6.26.0",
-        "fastclick": "^1.0.6",
         "lodash": "^4.17.4",
         "mint-ui": "2.2.7",
-        "normalize.css": "^7.0.0",
-        "pipe-concat": "0.0.3",
         "store": "^2.0.12",
         "vue": "2.3.4",
+        "vue-navigation": "^1.1.4",
         "vue-router": "^2.7.0",
         "vuex": "^2.3.1"
     }

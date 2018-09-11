@@ -1,5 +1,5 @@
 module.exports = {
-    devPort: 8081,
+    devPort: 8088,
     projectConfig: {
         default: {
             name: "xxx",

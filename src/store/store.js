@@ -3,7 +3,6 @@
  */
 import Vue from "vue";
 import Vuex from "vuex";
-import storage from "store";
 
 Vue.use(Vuex);
 
@@ -13,7 +12,7 @@ const store = new Vuex.Store({
         spinner: true,
         loading: false,
         // 过渡模式
-        transition: false,
+        transition: false
     },
     mutations: {
         spinner(state, param) {
@@ -27,7 +26,7 @@ const store = new Vuex.Store({
         },
         transition(state, p) {
             state.transition = p;
-        },
+        }
     },
     actions: {},
     getters: {},

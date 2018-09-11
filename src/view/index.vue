@@ -1,11 +1,9 @@
 <template>
-    <ui-layout class="index">
-
-    </ui-layout>
+    <ui-layout class="index"></ui-layout>
 </template>
 <script>
 import forward from "./../mixin/forward.js";
-import { login } from "../router/loginIntercept";
+import { login } from "../router/routerConfig.js";
 export default {
     mixins: [forward],
     data() {
@@ -22,7 +20,7 @@ export default {
         if (login) {
             this.auth();
         } else {
-            this.forward(true);
+            this.forward();
         }
     },
     methods: {

@@ -2,21 +2,21 @@
  * Created by kuo zi on 2016/10/18.
  */
 import Vue from "vue";
-import axios from "axios";
 import store from "store";
 
-import project from "../../config/project/project.env";
-
-import urls from "./../utils/urls";
+import { navPages } from "../router/routerConfig";
 import { fetch, $get, $post } from "../utils/fetch";
 
 import UiLayout from "../components/UiLayout.vue";
-import UiHead from "../components/UiHead.vue";
 import UiContainer from "../components/UiContainer.vue";
+import UiHead from "../components/UiHead.vue";
+
+Vue.component("ui-layout", UiLayout);
+Vue.component("ui-head", UiHead);
+Vue.component("ui-container", UiContainer);
 
 //全局混合
 Vue.mixin({
-    components: { UiLayout, UiHead, UiContainer },
     data() {
         return {
             PageSize: 15,

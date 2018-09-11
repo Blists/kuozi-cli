@@ -1,21 +1,22 @@
 <template>
-    <div class="container">
+    <div class="ui-container" @scroll="scroll">
         <slot></slot>
     </div>
 </template>
 
 <script>
-export default {};
+export default {
+    methods: {
+        scroll($event) {
+            this.$emit("scroll", $event);
+        }
+    }
+};
 </script>
 
 <style lang="less">
-.ui-layout {
-    height: 100%;
-    background: white;
-    .ui-layout-container {
-        display: flex;
-        flex-direction: column;
-        height: 100%;
-    }
+.ui-container {
+    flex: 1;
+    overflow: auto;
 }
 </style>

@@ -1,13 +1,17 @@
 <template>
     <ui-layout>
-        <ui-head title="测试"></ui-head>
-        <ui-container>
-            <div>测试页面</div>
-            <button @click="$to({name:'home'})">首页</button>
-            <button @click="$to({name:'testDetail'})">部分子路由testDetail</button>
+        <ui-head slot="top" title="测试"></ui-head>
+        <div>测试页面</div>
+        <div>
+            <button @click="$to({name:'home'})">再去首页，重新加载</button>
+        </div>
+        <div>
+            <button @click="$to({name:'testDetail',params:{id:123}})">部分子路由testDetail</button>
+        </div>
+        <div>
             <button @click="$to({name:'testDetail1'})">全屏子路由testDetail1</button>
-            <router-view></router-view>
-        </ui-container>
+        </div>
+        <router-view></router-view>
     </ui-layout>
 </template>
 
@@ -24,5 +28,4 @@ export default {
 </script>
 
 <style lang="less" scoped>
-
 </style>

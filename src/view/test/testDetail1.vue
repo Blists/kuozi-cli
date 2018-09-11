@@ -1,9 +1,7 @@
 <template>
     <ui-layout full>
-        <ui-head title="testDetail1"></ui-head>
-        <ui-container>
+        <ui-head slot="top" title="testDetail1"></ui-head>
             testDetail1
-        </ui-container>
     </ui-layout>
 </template>
 

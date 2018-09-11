@@ -1,17 +1,12 @@
 <template>
-  <ui-layout>
-        <ui-container>
-            testDetail
-        </ui-container>
+    <ui-layout>
+        testDetail
     </ui-layout>
 </template>
 
 <script>
-export default {
-
-}
+export default {};
 </script>
 
 <style>
-
 </style>

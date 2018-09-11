@@ -1,9 +1,7 @@
 <template>
     <ui-layout>
-        <ui-head title="登录" no-back></ui-head>
-        <ui-container>
-            <button @click="login">登录</button>
-        </ui-container>
+        <ui-head slot="top" title="登录" no-back></ui-head>
+        <button @click="login">登录</button>
     </ui-layout>
 </template>
 
@@ -20,5 +18,4 @@ export default {
 </script>
 
 <style>
-
 </style>
