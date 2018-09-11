@@ -1,4 +1,4 @@
-### [更新记录](https://github.com/wenchao-pc/kuozi-cli/blob/vue-mobile/CHANGELOG.md)
+### [更新记录](https://github.com/Blists/yunye-cli/blob/vue-mobile/CHANGELOG.md)
 ### 使用说明
 - 脚手架工具
 	- github地址：https://github.com/Blists/yunye-cli
