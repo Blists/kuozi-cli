@@ -25,11 +25,9 @@
     </div>
 </template>
 <script>
-import {
-    forwardMixin
-} from "./../mixin/forwardMixin";
+import forward from "./../mixin/forward";
 export default {
-    mixins: [forwardMixin],
+    mixins: [forward],
     data() {
         return {
             lognumber: "",
@@ -70,5 +68,4 @@ export default {
 }
 </script>
 <style lang="less">
-@import "./../styles/common.less";
 </style>

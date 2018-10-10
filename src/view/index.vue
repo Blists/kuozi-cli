@@ -1,33 +1,33 @@
 <template>
     <div class="full-height">
-        
+
     </div>
 </template>
 <script>
-import {
-    forwardMixin
-} from "./../mixin/forwardMixin.js";
+import forward from "./../mixin/forward.js";
 export default {
-    mixins: [forwardMixin],
+    mixins: [forward],
     data() {
         return {
             auth: 0
-        }
+        };
     },
     created() {
-        let self = this;
+        this.forward();
+        // let self = this;
         //登录状态检测
-        this.$get("auth").then(res => {
-            window.login = true;
-            this.forward();
-        }).catch(() => {
-            this.forward();
-        });
+        // this.$get("auth")
+        //     .then(res => {
+        //         window.login = true;
+        //     })
+        //     .catch(() => {
+        //         this.forward();
+        //     });
     }
-}
+};
 </script>
 <style lang="less" scoped>
-@import "./../styles/common.less";
+@import "../style/variables.less";
 .full-height {
     background: white;
 }

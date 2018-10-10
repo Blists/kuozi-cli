@@ -25,8 +25,7 @@ let router = new Router({
     }, {
         name: "home",
         path: "/home",
-        component: home,
-        // children: main
+        component: home
     }, ]
 });
 //路由跳转钱操作
