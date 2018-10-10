@@ -5,6 +5,9 @@ import Vue from "vue";
 //js工具库 _
 import _ from "lodash";
 
+import ElementUI from "element-ui";
+import "element-ui/lib/theme-chalk/index.css";
+
 import "./style/style.less";
 import router from './router/router';
 import store from './store/store';
@@ -13,11 +16,10 @@ import "./mixin/mixin";
 import "./filter/filter";
 import App from "./App";
 
-// import VueTaber from 'vue-tabs';
-// import 'vue-tabs/vue-tabs.css';
 import Taber from './plugs/taber';
 import tabs from './router/tabs.js';
 
+Vue.use(ElementUI, { size: "small" });
 
 Vue.use(Taber);
 
