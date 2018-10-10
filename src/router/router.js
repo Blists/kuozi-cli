@@ -5,8 +5,10 @@ import Vue from "vue";
 import Router from "vue-router";
 
 import index from "./../view/index.vue";
-import login from "./../view/login.vue";
+import Login from "./../view/login.vue";
 import home from "./../view/home";
+
+import { login } from "./routerConfig";
 
 Vue.use(Router);
 
@@ -14,24 +16,30 @@ let router = new Router({
     // history模式需要后台支持
     // mode: "history",
     scrollBehavior: () => ({ y: 0 }),
-    routes: [{
-        name: "index",
-        path: "/index",
-        component: login
-    }, {
-        name: "login",
-        path: "/login",
-        component: login
-    }, {
-        name: "home",
-        path: "/home",
-        component: home
-    }, ]
+    routes: [
+        {
+            name: "index",
+            path: "/index",
+            component: index
+        },
+        {
+            name: "login",
+            path: "/login",
+            component: Login
+        },
+        {
+            name: "home",
+            path: "/home",
+            component: home,
+            meta: {
+                login: true
+            }
+        }
+    ]
 });
 //路由跳转钱操作
 router.beforeEach((to, form, next) => {
-    // 登录过滤
-    if (to.meta.login && !window.login) {
+    if (login && window.intercept && to.meta.login && !window.login) {
         next({ name: "login", query: { path: to.fullPath } });
     } else {
         if (to.fullPath.match("http")) {
@@ -43,6 +51,6 @@ router.beforeEach((to, form, next) => {
         }
         next();
     }
-})
+});
 
 export default router;

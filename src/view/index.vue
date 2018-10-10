@@ -1,7 +1,5 @@
 <template>
-    <div class="full-height">
-
-    </div>
+    <div></div>
 </template>
 <script>
 import forward from "./../mixin/forward.js";
@@ -13,6 +11,7 @@ export default {
         };
     },
     created() {
+        window.intercept = true;
         this.forward();
         // let self = this;
         //登录状态检测
@@ -27,17 +26,4 @@ export default {
 };
 </script>
 <style lang="less" scoped>
-@import "../style/variables.less";
-.full-height {
-    background: white;
-}
-
-.auth {
-    margin-top: 80%;
-    text-align: center;
-    color: @info;
-    &.auth-fail {
-        color: black;
-    }
-}
 </style>

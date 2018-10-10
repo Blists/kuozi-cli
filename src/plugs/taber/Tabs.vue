@@ -224,7 +224,10 @@ export default {
 </script>
 <style lang="less">
 .vue-tabs {
+    height: 100%;
     position: relative;
+    display: flex;
+    flex-direction: column;
 }
 
 .tabs-list-wrapper {
@@ -331,7 +334,7 @@ export default {
 
 .tabs-content-wrapper {
     position: relative;
-
+    flex: 1;
     .tabs-content {
         display: none;
 

@@ -1,31 +1,21 @@
-import store from "store";
+import { STRING } from "../utils/constants";
 export default {
     methods: {
         forward(e, token) {
             if (e === false) {
-                this.$router.replace({ name: "login", query: { path: this.$route.query.path } });
+                this.$router.replace({ name: "login" });
             } else {
                 if (e) {
                     window.login = true;
                     if (token) {
-                        store.set("$token", token);
+                        localStorage.setItem(STRING.TOKEN, token);
                     }
                 }
-                let path = this.$route.query.path;
-                if (path && path != "/" && path != "/index" && path != "/login") {
-                    if (token) {
-                        this.$router.push({
-                            path: this.$route.query.path
-                        });
-                    } else {
-                        this.$router.replace({
-                            path: this.$route.query.path
-                        });
-                    }
+                let path = sessionStorage.getItem("$path");
+                if (path && path != "/" && !/^\/index/.test(path) && !/^\/login/.test(path)) {
+                    this.$router.replace({ path });
                 } else {
-                    this.$router.replace({
-                        name: "main"
-                    });
+                    this.$router.replace({ name: "home" });
                 }
             }
         }

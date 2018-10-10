@@ -7,11 +7,10 @@ import store from "store";
 import { fetch, $get, $post } from "../utils/fetch";
 
 import UiLayout from "./../components/UiLayout.vue";
-import UiContainer from "./../components/UiContainer.vue";
 
 //全局混合
 Vue.mixin({
-    components: { UiLayout, UiContainer },
+    components: { UiLayout },
     data() {
         return {
             PageSize: 15,

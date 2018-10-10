@@ -6,21 +6,16 @@
 <script>
 export default {
     data() {
-        return {
-            msg: "hello"
-        };
+        return {};
     },
     created() {
         this.$store.commit("spinner", false);
-        // 本地开发 不用index跳转
-        if (process.env.NODE_ENV === "production") {
-            this.$router.replace({
-                name: "index",
-                query: {
-                    path: window.location.hash.replace("#", "")
-                }
-            });
+        let path = window.location.hash.replace("#", "");
+        if (path.match("/login") || path.match("/index")) {
+            sessionStorage.setItem("$path", "");
         }
+        sessionStorage.setItem("$path", path);
+        this.$router.replace({ name: "index" });
     },
     computed: {
         spinner() {

@@ -2,12 +2,13 @@ import project from "../../config/project/project.env";
 import urls from "./../utils/urls";
 
 import axios from "axios";
+import { STRING } from "./constants";
 
 axios.defaults.headers["x-requested-with"] = "XMLHttpRequest";
 
 let fetch = function(method, baseURL, url, data, options, noLoading, noToast, vue) {
     return new Promise((resolve, reject) => {
-        let token = localStorage.getItem("$token");
+        let token = localStorage.getItem(STRING.TOKEN);
         let o = options || {
             headers: {}
         };
