@@ -109,17 +109,17 @@ let $post = function(restKey, params, join, options, noLoading, noToast, vue) {
     return fetch("post", project.projectConfig[restKey[0]].baseURL + "/" + project.projectConfig[restKey[0]].rootPath, join ? urls[restKey[1]].url + "/" + join : urls[restKey[1]].url, params, options, noLoading, noToast, vue);
 };
 
-let $put = function(restKey, join, options, noLoading, noToast, vue) {
+let $put = function(restKey, join, params, options, noLoading, noToast, vue) {
     if (typeof restKey === "string") {
         restKey = ["default", restKey];
     }
-    return fetch("put", project.projectConfig[restKey[0]].baseURL + "/" + project.projectConfig[restKey[0]].rootPath, join ? urls[restKey[1]].url + "/" + join : urls[restKey[1]].url, null, options, noLoading, noToast, vue);
+    return fetch("put", project.projectConfig[restKey[0]].baseURL + "/" + project.projectConfig[restKey[0]].rootPath, join ? urls[restKey[1]].url + "/" + join : urls[restKey[1]].url, params, options, noLoading, noToast, vue);
 };
 
-let $delete = function(restKey, join, options, noLoading, noToast, vue) {
+let $delete = function(restKey, join, params, options, noLoading, noToast, vue) {
     if (typeof restKey === "string") {
         restKey = ["default", restKey];
     }
-    return fetch("delete", project.projectConfig[restKey[0]].baseURL + "/" + project.projectConfig[restKey[0]].rootPath, join ? urls[restKey[1]].url + "/" + join : urls[restKey[1]].url, null, options, noLoading, noToast, vue);
+    return fetch("delete", project.projectConfig[restKey[0]].baseURL + "/" + project.projectConfig[restKey[0]].rootPath, join ? urls[restKey[1]].url + "/" + join : urls[restKey[1]].url, params, options, noLoading, noToast, vue);
 };
 export { fetch, $get, $post, $put, $delete };
