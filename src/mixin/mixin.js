@@ -45,18 +45,17 @@ Vue.mixin({
         $postDirect(url, params, options, noLoading, noToast) {
             return fetch("post", "", url, params, options, noLoading, noToast, this);
         },
-        $put(restKey, join, options, noLoading, noToast) {
-            return $put(restKey, join, options, noLoading, noToast, this);
+        $put(restKey, join, params, options, noLoading, noToast) {
+            return $put(restKey, join, params, options, noLoading, noToast, this);
         },
-        $putDirect(url, options, noLoading, noToast) {
-            return fetch("put", "", url, null, options, noLoading, noToast, this);
+        $putDirect(url, params, options, noLoading, noToast) {
+            return fetch("put", "", url, params, options, noLoading, noToast, this);
         },
-
-        $delete(restKey, join, options, noLoading, noToast) {
-            return $delete(restKey, join, options, noLoading, noToast, this);
+        $delete(restKey, join, params, options, noLoading, noToast) {
+            return $delete(restKey, join, params, options, noLoading, noToast, this);
         },
-        $deleteDirect(url, options, noLoading, noToast) {
-            return fetch("delete", "", url, null, options, noLoading, noToast, this);
+        $deleteDirect(url, params, options, noLoading, noToast) {
+            return fetch("delete$delete", "", url, params, options, noLoading, noToast, this);
         },
         /**
          * [$back description]返回事件
