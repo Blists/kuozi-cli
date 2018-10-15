@@ -13,8 +13,4 @@ const nologin = {
     index: true,
     login: true
 };
-// 一级导航页面
-const navPages = {
-    home: true
-};
-export { dynamic, login, needlogin, nologin, navPages };
+export { dynamic, login, needlogin, nologin };
