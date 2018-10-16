@@ -22,7 +22,11 @@ import App from "./App";
 // // 去掉ios上300毫秒延迟
 // FastClick.attach(document.body);
 
-Vue.use(Navigation, { router, store, keyName: "nav" });
+Vue.use(Navigation, {
+    router,
+    store,
+    keyName: "nav"
+});
 Vue.use(MintUI);
 
 Vue.config.devtools = true;
@@ -32,5 +36,9 @@ let vm = new Vue({
     store,
     render: h => h(App)
 });
+
+if (Vue) {
+    Vue.use(MintUI);
+}
 
 export default vm;
