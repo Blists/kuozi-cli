@@ -46,10 +46,10 @@ Vue.mixin({
         $putDirect(url, params, options, noLoading, noToast) {
             return fetch("put", "", url, params, options, noLoading, noToast, this);
         },
-        $delete(restKey, join, params, options, noLoading, noToast) {
+        $del(restKey, join, params, options, noLoading, noToast) {
             return $delete(restKey, join, params, options, noLoading, noToast, this);
         },
-        $deleteDirect(url, params, options, noLoading, noToast) {
+        $delDirect(url, params, options, noLoading, noToast) {
             return fetch("delete$delete", "", url, params, options, noLoading, noToast, this);
         },
         /**
