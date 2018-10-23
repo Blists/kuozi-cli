@@ -3,8 +3,7 @@ module.exports = {
         default: {
             name: "",
             rootPath: "",
-            baseURL: "",
-            proxyServer: ""
+            baseURL: ""
         }
     }
-}
+};
