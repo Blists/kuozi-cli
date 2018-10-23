@@ -171,7 +171,7 @@ gulp.task("dev", ["choose-ugfjs"], function() {
  * gulp+webpack Build
  */
 //删除dist
-gulp.task("clean", ["split"], function() {
+gulp.task("clean", ["choose-ugfjs"], function() {
     return gulp
         .src("./dist", {
             read: false
