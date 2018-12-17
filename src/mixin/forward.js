@@ -12,10 +12,11 @@ export default {
                     }
                 }
                 let path = sessionStorage.getItem("$path");
+                sessionStorage.clear("$path");
                 if (path && path != "/" && !/^\/index/.test(path) && !/^\/login/.test(path)) {
                     this.$router.replace({ path });
                 } else {
-                    this.$router.replace({ name: "home" });
+                    this.$router.replace({ name: STRING.HOME });
                 }
             }
         }
