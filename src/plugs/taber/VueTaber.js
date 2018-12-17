@@ -1,152 +1,184 @@
-import {isString, isFunction, store, consts} from './utils'
-import install from './install'
+import { isString, isFunction, store, consts } from "./utils";
+import install from "./install";
 
-const allEvents = ['vue-tabs-close', 'vue-tabs-active-change']
+const allEvents = ["vue-tabs-close", "vue-tabs-active-change"];
 export default class VueTaber {
-    constructor (options) {
-        const {tabs: ops_tabs, persist} = options
-        this._tabsMap = {}
-        ops_tabs.forEach((tab) => {
-            this._tabsMap[tab.name] = tab
-        })
+    constructor(options) {
+        const { tabs: ops_tabs, persist } = options;
+        this._tabsMap = {};
+        ops_tabs.forEach(tab => {
+            this._tabsMap[tab.name] = tab;
+        });
 
-        this.beforeCreateHooks = []
-        this.beforeCloseHooks = []
+        this.beforeCreateHooks = [];
+        this.beforeCloseHooks = [];
 
-        this._events = {}
-        this.persist = persist
+        this._events = {};
+        this.persist = persist;
     }
 
-    findTab (tab) {
+    findTab(tab) {
         if (!tab) {
-            return null
+            return null;
         }
-        let name
+        let name;
         if (isString(tab)) {
-            name = tab
+            name = tab;
         } else {
-            name = tab.name
+            name = tab.name;
         }
-        return this._tabsMap[name]
+        return this._tabsMap[name];
     }
 
-    open (tab) {
+    open(tab) {
         if (isString(tab)) {
-            tab = {name: tab}
+            tab = { name: tab };
         }
-        let meta = this.findTab(tab)
+        let meta = this.findTab(tab);
         if (!meta) {
-            console.error(`The Tab [${tab.name}] is not defined!`)
-            return
+            console.error(`The Tab [${tab.name}] is not defined!`);
+            return;
         }
-        tab.meta = meta
-        const findedTab = this.vm.findOpenTab(tab.name, tab.key)
+        tab.meta = meta;
+        const findedTab = this.vm.findOpenTab(tab.name, tab.key);
         if (!findedTab) {
-            this.vm.create(tab)
+            this.vm.create(tab);
         } else {
-            this.vm.select(findedTab)
+            this.vm.select(findedTab);
         }
     }
 
-    close (tab) {
+    close(tab) {
         if (isString(tab)) {
-            tab = {name: tab}
+            tab = { name: tab };
         }
-        let meta = this.findTab(tab)
+        let meta = this.findTab(tab);
         if (!meta) {
-            console.error(`The Tab [${tab.name}] is not defined!`)
-            return
+            console.error(`The Tab [${tab.name}] is not defined!`);
+            return;
         }
-        tab.meta = meta
-        const findedTab = this.vm.findOpenTab(tab.name, tab.key)
-        this.vm.close(findedTab)
+        tab.meta = meta;
+        const findedTab = this.vm.findOpenTab(tab.name, tab.key);
+        this.vm.close(findedTab);
     }
 
-    select (tab) {
+    closeAll() {
+        this.vm.closeAll();
+    }
+
+    select(tab) {
         if (isString(tab)) {
-            tab = {name: tab}
+            tab = { name: tab };
         }
-        const findedTab = this.vm.findOpenTab(tab.name, tab.key)
-        this.vm.select(findedTab)
+        const findedTab = this.vm.findOpenTab(tab.name, tab.key);
+        this.vm.select(findedTab);
     }
 
-    $on (event, call) {
+    viewTab() {
+        let tabWarp = this.vm.warpNode;
+        let tabParent = this.vm.tabsNode;
+        if (tabWarp && tabParent) {
+            this.vm.$nextTick(() => {
+                let activeTab = tabParent.querySelector("li.active");
+                if (activeTab && tabWarp.clientWidth < tabParent.clientWidth) {
+                    let left = (tabParent.style.left.replace("px", "") || 0) / 1;
+                    let paddingLeft = (window.getComputedStyle(tabParent).paddingLeft.replace("px", "") || 0) / 1;
+                    if (activeTab.offsetLeft - paddingLeft + left < 0) {
+                        tabParent.style.left = -(activeTab.offsetLeft - paddingLeft) + "px";
+                    }
+                    if (activeTab.offsetLeft - paddingLeft + left > tabWarp.clientWidth - activeTab.clientWidth) {
+                        tabParent.style.left = tabWarp.clientWidth - activeTab.clientWidth - activeTab.offsetLeft - paddingLeft + "px";
+                    }
+                }
+            });
+        }
+    }
+
+    $on(event, call) {
         if (!event || !isFunction(call)) {
-            console.error('$on error event:[' + event + '], call:' + call)
-            return
+            console.error("$on error event:[" + event + "], call:" + call);
+            return;
         }
         if (!this._events[event]) {
-            this._events[event] = []
+            this._events[event] = [];
         }
-        this._events[event].push(call)
+        this._events[event].push(call);
     }
 
-    $off (event, call) {
+    $off(event, call) {
         if (!event) {
-            return
+            return;
         }
-        const listeners = this._events[event] || []
+        const listeners = this._events[event] || [];
         if (call) {
-            const index = listeners.indexOf(call)
+            const index = listeners.indexOf(call);
             if (index !== -1) {
-                listeners.splice(index, 1)
+                listeners.splice(index, 1);
             }
         } else {
-            this._events[event] = []
+            this._events[event] = [];
         }
     }
 
-    beforeCreateEach (fn) {
+    beforeCreateEach(fn) {
         if (!isFunction(fn)) {
-            return
+            return;
         }
-        this.beforeCreateHooks.push(fn)
+        this.beforeCreateHooks.push(fn);
     }
 
-    beforeCloseEach (fn) {
+    beforeCloseEach(fn) {
         if (!isFunction(fn)) {
-            return
+            return;
         }
-        this.beforeCloseHooks.push(fn)
+        this.beforeCloseHooks.push(fn);
     }
 
-    _restoreTabs () {
+    _restoreTabs() {
+        let nocacheTab = this.vm.$route.params.nocacheTab;
         if (!this.persist) {
-            return
+            return;
         }
-        const storeTabs = store.get(consts.STORE_KEY)
+        if (nocacheTab) {
+            store.save(consts.STORE_KEY, []);
+            return;
+        }
+        const storeTabs = store.get(consts.STORE_KEY);
         if (!storeTabs) {
-            return
+            return;
         }
-        storeTabs.forEach((tab) => {
-            this.open(tab)
-        })
+        storeTabs.forEach(tab => {
+            this.open(tab);
+        });
     }
 
-    mounted () {
-        this._restoreTabs()
+    mounted() {
+        this._restoreTabs();
     }
 
-    set vm (vm) {
-        this._vm = vm
-        const _this = this
-        allEvents.forEach((event) => {
+    set vm(vm) {
+        this._vm = vm;
+        const _this = this;
+        allEvents.forEach((event, index) => {
             vm.$on(event, (...args) => {
-                const listeners = this._events[event] || []
-                listeners.forEach((listener) => {
-                    listener.apply(_this, args)
-                })
-            })
-        })
+                const listeners = this._events[event] || [];
+                listeners.forEach(listener => {
+                    listener.apply(_this, args);
+                });
+                if (index == 1) {
+                    this.viewTab();
+                }
+            });
+        });
     }
 
-    get vm () {
-        return this._vm
+    get vm() {
+        return this._vm;
     }
 }
 
-VueTaber.install = install
+VueTaber.install = install;
 
 if (window.Vue) {
-    window.Vue.use(VueTaber)
+    window.Vue.use(VueTaber);
 }

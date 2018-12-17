@@ -1,9 +1,13 @@
 <template>
     <div class="vue-tabs">
         <div class="tabs-list-wrapper">
-            <ul class="tabs-list">
-                <tab v-for="tab in tabs" :tab-data="tab" @close="close(tab)" @click.native="clickTab(tab)" :key="tab.name+(tab.key?tab.key:'')"></tab>
-            </ul>
+            <div class="move-left" @click="moveLeft()"></div>
+            <div ref="warpNode" class="tabs-list-warp">
+                <ul ref="tabsNode" class="tabs-list">
+                    <tab v-for="tab in tabs" :tab-data="tab" @close="close(tab)" @click.native="clickTab(tab)" :key="tab.name+(tab.key?tab.key:'')" :no-close="tabs.length==1"></tab>
+                </ul>
+            </div>
+            <div class="move-right" @click="moveRight()"></div>
         </div>
         <div class="tabs-content-wrapper" ref="contentWrapEl">
         </div>
@@ -23,11 +27,19 @@ const EVENT_ACTIVE_CHANGE = "vue-tabs-active-change";
 const EVENT_CLOSE = "vue-tabs-close";
 const cached = {};
 export default {
+    props: {
+        step: {
+            type: [String, Number],
+            default: 200
+        }
+    },
     components: { Tab },
     data() {
         return {
             tabs: [],
-            active: null
+            active: null,
+            warpNode: null,
+            tabsNode: null
         };
     },
     beforeCreate() {
@@ -39,8 +51,29 @@ export default {
     },
     mounted() {
         this.$taber.mounted();
+        this.warpNode = this.$refs.warpNode;
+        this.tabsNode = this.$refs.tabsNode;
+        this.$emit(EVENT_ACTIVE_CHANGE);
     },
     methods: {
+        moveLeft() {
+            this.move(this.step / 1);
+        },
+        moveRight() {
+            this.move(-this.step / 1);
+        },
+        move(e) {
+            if (this.tabsNode.clientWidth >  this.warpNode.clientWidth) {
+                let left = ((this.tabsNode.style.left.replace("px", "") || 0) / 1 + e);
+                if (left > 0) {
+                    left = 0;
+                }
+                if (-left > this.tabsNode.clientWidth - this.warpNode.clientWidth) {
+                    left = this.warpNode.clientWidth - this.tabsNode.clientWidth;
+                }
+                this.tabsNode.style.left =  left + "px";
+            }
+        },
         appendContent(tab) {
             let Component = cached[tab.name];
             const _this = this;
@@ -82,9 +115,11 @@ export default {
             }
         },
         clickTab(tab) {
+            this.$emit("click", tab);
             if (tab && !tab.active) {
                 this.select(tab);
             }
+
         },
         close(tab) {
             if (!tab) {
@@ -128,6 +163,11 @@ export default {
                     this._saveTabs();
                 }
                 this.$emit(EVENT_CLOSE, tab);
+            }
+        },
+        closeAll() {
+            for (let tab of Object.values(this.tabMap)) {
+                this.close(tab);
             }
         },
         create(tab) {
@@ -223,6 +263,7 @@ export default {
 };
 </script>
 <style lang="less">
+@import "../../style/variables.less";
 .vue-tabs {
     height: 100%;
     position: relative;
@@ -231,7 +272,51 @@ export default {
 }
 
 .tabs-list-wrapper {
-    padding: 0px 8px;
+    display: flex;
+    height: 70px;
+    overflow: hidden;
+    box-shadow: 0 2px 5px 4px #f2f6fc;
+    z-index: 9;
+    ._move{
+        position: relative;
+        z-index: 1;
+        width: 40px;
+        background: white;
+        cursor: pointer;
+        box-shadow: 0 2px 5px 4px #f2f6fc;
+        &::before{
+            position: absolute;
+            top:50%;
+            left: 50%;
+            content: "";
+            width: 12px;
+            height: 12px;
+            border: 2px #9b9b9b;
+            border-style: solid solid none none;
+            border-radius: 0 2px 0 0;
+        }
+    }
+    .move-left{
+        ._move;
+        &::before{
+            margin-top: -8px;
+            margin-left: -2px;
+            transform: rotate(-135deg);
+        }
+    }
+    .move-right{
+        ._move;
+        &::before{
+            margin-top: -8px;
+            margin-left: -10px;
+            transform: rotate(45deg);
+        }
+    }
+    .tabs-list-warp{
+        position: relative;
+        flex: 1;
+        overflow: hidden;
+    }
 }
 
 @keyframes loading-rotate {
@@ -253,19 +338,43 @@ export default {
 }
 
 .tabs-list {
-    list-style: none;
+    position: absolute;
+    left: 0;
+    display: flex;
+    flex-wrap: nowrap;
     margin: 0px;
-    padding: 0px;
-    overflow: auto;
-    width: auto;
-    zoom: 1;
-
+    padding: 10px 30px;
+    list-style: none;
+    transition: all .3s;
     > li {
-        float: left;
-        padding: 6px 18px;
         position: relative;
-        color: #999;
-
+        min-width: 160px;
+        text-align: center;
+        padding: 11px 36px 11px 18px;
+        margin-right: 20px;
+        white-space: nowrap;
+        font-size: 18px;
+        color: #4a4a4a;
+        transition: all .3s;
+        &:first-child {
+            &:after {
+                content: none;
+            }
+        }
+        &:last-child {
+            margin-right: 0;
+        }
+        &:after {
+            content: "";
+            position: absolute;
+            width: 2px;
+            height: 40px;
+            top: 50%;
+            left: 0;
+            margin-top: -20px;
+            background: #cfd7e0;
+            transition: all .3s;
+        }
         &.loading:before {
             content: " ";
             box-sizing: border-box;
@@ -284,18 +393,16 @@ export default {
         }
 
         &.active {
-            color: #333;
-
-            &:after {
-                content: " ";
-                position: absolute;
-                bottom: 0px;
-                width: 100%;
-                height: 2px;
-                background-color: #1ab394;
-                left: 0px;
+            border-radius: 4px;
+            box-shadow: 0px 4px 20px 0px rgba(206, 218, 243, 1);
+            color: @info;
+            margin-left: 20px;
+            &:first-child {
+                margin-left: 0;
             }
-
+            &:after {
+                left: -20px;
+            }
             .btn-close {
                 opacity: 1;
             }
@@ -303,7 +410,6 @@ export default {
 
         &:hover {
             cursor: pointer;
-
             .btn-close {
                 opacity: 1;
             }
@@ -312,20 +418,23 @@ export default {
         .btn-close {
             position: absolute;
             display: inline-block;
-            opacity: 0;
-            top: 2px;
-            right: 0px;
-            line-height: 12px;
-            width: 14px;
-            height: 14px;
-            border-radius: 14px;
-            font-size: 12px;
-            color: #999;
+            top: 50%;
+            margin-top: -9px;
+            right: 9px;
+            line-height: 16px;
+            width: 20px;
+            height: 20px;
+            border-radius: 18px;
+            border: 1px solid transparent;
+            font-size: 16px;
+            color: #9b9b9b;
             transition: all 0.2s ease;
+            text-align: center;
 
             &:hover {
-                color: #333;
-                transform: scale(1.5);
+                color: @info;
+                border-color: @info;
+                // transform: scale(1.5);
                 cursor: pointer;
             }
         }
@@ -335,8 +444,10 @@ export default {
 .tabs-content-wrapper {
     position: relative;
     flex: 1;
+    overflow: auto;
     .tabs-content {
         display: none;
+        overflow: auto;
 
         &.active {
             display: block;

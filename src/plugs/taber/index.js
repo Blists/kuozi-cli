@@ -1,3 +1,3 @@
-import VueTaber from './VueTaber'
+import VueTaber from "./VueTaber";
 
-export default VueTaber
+export default VueTaber;
