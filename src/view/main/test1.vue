@@ -25,6 +25,7 @@
                             <el-form-item>
                                 <el-button type="primary">查询</el-button>
                                 <el-button type="primary">添加</el-button>
+                                <el-button type="primary" @click="$to({name:'test2'})">test2</el-button>
                             </el-form-item>
                         </el-row>
                     </el-form>
@@ -61,7 +62,7 @@ export default {
     components: { UiPage },
     data() {
         return {
-            brs: [{ name: "首页", to: { name: "home" } }],
+            brs: [{ name: "测试1", to: { name: "test1" } }],
             formInline: {
                 user: "",
                 date: ""

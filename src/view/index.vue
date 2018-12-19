@@ -6,13 +6,11 @@
     </div>
 </template>
 <script>
-import { forward } from "./../mixin/forward.js";
+import forward from "./../mixin/forward.js";
 export default {
     mixins: [forward],
     data() {
-        return {
-            auth: 0
-        };
+        return { auth: 0 };
     },
     created() {
         this.auth = 1;

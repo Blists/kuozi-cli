@@ -1,6 +1,8 @@
 <template>
     <div class="app">
-        <router-view></router-view>
+        <navigation>
+            <router-view></router-view>
+        </navigation>
     </div>
 </template>
 <script>
@@ -9,18 +11,14 @@ export default {
         return {};
     },
     created() {
+        sessionStorage.removeItem("VUE_NAVIGATION");
         this.$store.commit("spinner", false);
-        let to = { name: "index", query: {} };
         let path = window.location.hash.replace("#", "");
-        if (path.match("/login")) {
-            to.query.path = decodeURIComponent(path.replace("/login?path=", ""));
-        } else if (path.match("/index")) {
-            to.query.path = decodeURIComponent(path.replace("/index?path=", ""));
-        } else {
-            to.query.path = decodeURIComponent(path);
+        if (path.match("/login") || path.match("/index")) {
+            sessionStorage.setItem("$path", "");
         }
-        window.intercept = true;
-        this.$router.replace(to);
+        sessionStorage.setItem("$path", path);
+        this.$router.replace({ name: "index" });
     },
     methods: {},
     computed: {

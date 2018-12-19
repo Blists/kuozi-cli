@@ -8,65 +8,92 @@ import Index from "../view/index.vue";
 import Login from "../view/login.vue";
 import Main from "../view/main.vue";
 
-// 需要登录页面
-import { login, needlogin, nologin } from "./loginIntercept";
+
+// 路由配置
+import { dynamic, login, needlogin, nologin } from "./routerConfig";
 
 Vue.use(Router);
 
 let { routes } = require("./router." + (process.env.SPLIT ? "split" : "full") + ".js");
 
-for (let key of Object.keys(routes)) {
-    routes[key].meta = routes[key].meta || {};
-    routes[key].meta.login = login;
-}
-
-for (let page of needlogin) {
-    if (!routes[page]) continue;
-    routes[page].meta = routes[page].meta || {};
-    routes[page].meta.login = true;
-}
-
-for (let page of nologin) {
-    if (!routes[page]) continue;
-    routes[page].meta = routes[page].meta || {};
-    routes[page].meta.login = false;
-}
+let routesArray = [];
+let routesObj2Array = (array, obj) => {
+    for (let k in obj) {
+        if (obj[k].children) {
+            let children = [];
+            routesObj2Array(children, obj[k].children);
+            obj[k].children = children;
+        }
+        // 配置通配符匹配
+        if (dynamic[k]) {
+            obj[k].path = obj[k].path + dynamic[k];
+        }
+        // 配置默认login
+        obj[k].meta = obj[k].met || {};
+        obj[k].meta.login = login;
+        // 配置需要登录页面
+        if (needlogin[k]) {
+            obj[k].meta = obj[k].met || {};
+            obj[k].meta.login = true;
+        }
+        // 配置不需要登录页面
+        if (nologin[k]) {
+            obj[k].meta = obj[k].met || {};
+            obj[k].meta.login = false;
+        }
+        if (obj[k].name == "article") {
+            array.push({
+                path: "/",
+                meta: obj[k].meta,
+                component: obj[k].component
+            });
+        }
+        array.push(obj[k]);
+    }
+};
+routesObj2Array(routesArray, routes);
 
 let allRoutes = [
     {
         name: "index",
         path: "/index",
-        meta: { login: false },
+        meta: { login },
         component: Index
     },
     {
         name: "login",
         path: "/login",
-        meta: { login: false },
+        meta: { login },
         component: Login
     },
     {
         name: "main",
         path: "/main",
-        meta: { login: true },
+        meta: { login },
         redirect: { name: "home" },
         component: Main,
-        children: Object.values(routes)
+        children: routesArray
     }
 ];
 
 let router = new Router({
     // history模式需要后台支持
     // mode: "history",
-    // scrollBehavior: () => ({ y: 0 }),
+    scrollBehavior: (to, from, savedPosition) => {
+        setTimeout(() => {
+            savedPosition = savedPosition || { x: 0, y: 0 };
+            window.scrollTo(savedPosition.x, savedPosition.y);
+        }, 500);
+    },
     routes: allRoutes
 });
 
-//路由跳转钱操作
+// 路由跳转前操作
 router.beforeEach((to, form, next) => {
     // 登录过滤
     if (window.intercept && to.meta.login && !window.login) {
-        next({ name: "login", query: { path: to.fullPath } });
+        sessionStorage.setItem("$path", to.fullPath);
+        next({ name: "login" });
     } else {
         next();
     }

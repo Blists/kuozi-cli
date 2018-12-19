@@ -19,7 +19,7 @@
 </template>
 
 <script>
-import { forward } from "./../mixin/forward.js";
+import forward from "./../mixin/forward.js";
 export default {
     mixins: [forward],
     data() {

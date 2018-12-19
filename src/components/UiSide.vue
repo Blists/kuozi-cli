@@ -1,9 +1,17 @@
 <template>
     <div class="ui-side" :class="{collapse:collapse}">
-        <el-menu default-active="0" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose" :collapse="collapse">
-            <el-menu-item index="0" @click.native="$to({name:'home'})">
+        <el-menu default-active="home" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose" :collapse="collapse">
+            <el-menu-item index="home" @click.native="$to({name:'home'})">
                 <i class="fa fa-home fa-fw fa-lg"></i>
                 <span slot="title">首页</span>
+            </el-menu-item>
+            <el-menu-item index="test1" @click.native="$to({name:'test1'})">
+                <i class="fa fa-home fa-fw fa-lg"></i>
+                <span slot="title">测试1</span>
+            </el-menu-item>
+            <el-menu-item index="test2" @click.native="$to({name:'test2'})">
+                <i class="fa fa-home fa-fw fa-lg"></i>
+                <span slot="title">测试2</span>
             </el-menu-item>
         </el-menu>
         <div class="dock" @click="collapse = !collapse">
@@ -16,13 +24,15 @@
 <script>
 export default {
     data() {
-        return {
-            collapse: false
-        };
+        return { collapse: false };
     },
     methods: {
-        handleOpen(key, keyPath) {},
-        handleClose(key, keyPath) {}
+        handleOpen(key, keyPath) {
+            console.log(key, keyPath);
+        },
+        handleClose(key, keyPath) {
+            console.log(key, keyPath);
+        }
     }
 };
 </script>

@@ -3,6 +3,7 @@
 import "babel-polyfill";
 
 import Vue from "vue";
+import Navigation from "vue-navigation";
 
 import ElementUI from "element-ui";
 import "element-ui/lib/theme-chalk/index.css";
@@ -18,6 +19,12 @@ import "./mixin/mixin";
 import "./filter/filter";
 import App from "./App";
 
+
+Vue.use(Navigation, {
+    router,
+    store,
+    keyName: "nav"
+});
 Vue.use(ElementUI, { size: "small" });
 
 Vue.config.devtools = true;
@@ -27,3 +34,5 @@ let vm = new Vue({
     store,
     render: h => h(App)
 });
+
+export default vm;

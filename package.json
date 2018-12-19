@@ -31,7 +31,6 @@
         "babel-plugin-syntax-dynamic-import": "^6.18.0",
         "babel-plugin-transform-runtime": "^6.23.0",
         "babel-preset-latest": "^6.24.1",
-        "compression-webpack-plugin": "^1.0.0",
         "css-loader": "^0.28.1",
         "eslint": "^5.7.0",
         "eslint-plugin-html": "^4.0.6",
@@ -63,12 +62,13 @@
     "dependencies": {
         "axios": "^0.17.1",
         "babel-polyfill": "^6.26.0",
-        "element-ui": "^2.0.7",
+        "element-ui": "^2.4.11",
         "lodash": "^4.17.4",
         "moment": "^2.19.3",
         "store": "^2.0.12",
         "viewerjs": "^0.10.0",
         "vue": "^2.5.9",
+        "vue-navigation": "^1.1.4",
         "vue-router": "^3.0.1",
         "vuex": "^3.0.1",
         "wangeditor": "^3.0.15"

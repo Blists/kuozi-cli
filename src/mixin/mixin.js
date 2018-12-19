@@ -9,7 +9,7 @@ import { fetch, $get, $post, $put, $delete } from "../utils/fetch";
 import UiLayout from "./../components/UiLayout.vue";
 import UiContainer from "./../components/UiContainer.vue";
 
-//全局混合
+// 全局混合
 Vue.mixin({
     components: { UiLayout, UiContainer },
     data() {
@@ -92,6 +92,10 @@ Vue.mixin({
             if (r != null) return decodeURI(r[2]);
             return null;
         },
-        beforeDestroy() {}
+        beforeDestroy() {
+            this.$loaded ? this.$loaded() : null;
+            this.$loaded ? this.$loaded() : null;
+            this.$indicator ? this.$indicator.close() : null;
+        }
     }
 });

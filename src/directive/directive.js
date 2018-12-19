@@ -16,23 +16,19 @@ Vue.directive("focus", {
 });
 
 Vue.directive("scroll-bottom", {
-    inserted(el, binding) {
-        el.addEventListener("scroll", () => {
-            if (el.scrollHeight - el.scrollTop - el.clientHeight <= binding.value) {
-                el.setAttribute("data-scroll-bottom", "y");
-            } else {
-                el.setAttribute("data-scroll-bottom", "n");
-            }
-        });
+    inserted(el) {
         setTimeout(function() {
             el.scrollTop = el.scrollHeight;
         }, 10);
     },
-    componentUpdated(el, binding) {
+    update(el) {
         setTimeout(function() {
-            if (el.getAttribute("data-scroll-bottom") != "n") {
-                el.scrollTop = el.scrollHeight;
-            }
+            el.scrollTop = el.scrollHeight;
+        }, 10);
+    },
+    componentUpdated(el) {
+        setTimeout(function() {
+            el.scrollTop = el.scrollHeight;
         }, 10);
     }
 });
@@ -51,12 +47,14 @@ Vue.directive("scroll-head", {
                 } else {
                     head.style.opacity = 0.95;
                 }
+
             }
         });
     }
 });
 
-//移动端滑动
+
+// 移动端滑动
 var touchStart = function(e, el) {
     var touches = e.touches[0];
     el.dataset.tsx = touches.pageX;
@@ -82,9 +80,9 @@ Vue.directive("swipe-left", {
             if (Math.abs(cx) > Math.abs(cy) && cx < 0 && ct > 10) {
                 try {
                     if (typeof binding.value === "function") {
-                        binding.value();
+                        (binding.value)();
                     } else {
-                        binding.value.method(binding.value.params);
+                        (binding.value.method)(binding.value.params);
                     }
                 } catch (e) {
                     throw new Error("v-swipe-left error parameter");
@@ -110,9 +108,9 @@ Vue.directive("swipe-right", {
             if (Math.abs(cx) > Math.abs(cy) && cx > 0 && ct > 10) {
                 try {
                     if (typeof binding.value === "function") {
-                        binding.value();
+                        (binding.value)();
                     } else {
-                        binding.value.method(binding.value.params);
+                        (binding.value.method)(binding.value.params);
                     }
                 } catch (e) {
                     throw new Error("v-swipe-left error parameter");
