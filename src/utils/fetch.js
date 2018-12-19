@@ -9,9 +9,7 @@ axios.defaults.headers["x-requested-with"] = "XMLHttpRequest";
 let fetch = function(method, baseURL, url, data, options, noLoading, noToast, vue) {
     return new Promise((resolve, reject) => {
         let token = localStorage.get(STRING.TOKEN);
-        let o = options || {
-            headers: {}
-        };
+        let o = options || { headers: {} };
         o.method = method;
         o.baseURL = baseURL;
         o.url = url;
@@ -38,13 +36,11 @@ let fetch = function(method, baseURL, url, data, options, noLoading, noToast, vu
                         vue &&
                             vue.$to({
                                 name: "login",
-                                query: {
-                                    path: vue.$route.fullPath
-                                }
+                                query: { path: vue.$route.fullPath }
                             });
                     } else {
                         if (!noToast) {
-                            // vue && vue.$toast(res.message);
+                            vue && vue.$toast(res.message);
                         }
                     }
                     reject();
@@ -54,18 +50,18 @@ let fetch = function(method, baseURL, url, data, options, noLoading, noToast, vu
                 if (!noToast) {
                     if (error.response && error.response.status) {
                         switch (error.response.status) {
-                            case 404:
-                                // vue && vue.$toast(`错误代码404`);
-                                break;
-                            case 502:
-                                // vue && vue.$toast(`服务器正在升级,请稍后再试`);
-                                break;
-                            case 504:
-                                // vue && vue.$toast(`网络已断开`);
-                                break;
-                            default:
-                                // vue && vue.$toast(`请求服务异常,请稍后再试（${error.response.status}`）);
-                                break;
+                        case 404:
+                            vue && vue.$toast(`错误代码404`);
+                            break;
+                        case 502:
+                            vue && vue.$toast(`服务器正在升级,请稍后再试`);
+                            break;
+                        case 504:
+                            vue && vue.$toast(`网络已断开`);
+                            break;
+                        default:
+                            vue && vue.$toast(`请求服务异常,请稍后再试（${error.response.status}）`);
+                            break;
                         }
                     }
                 }

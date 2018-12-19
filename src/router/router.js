@@ -3,7 +3,6 @@
  */
 import Vue from "vue";
 import Router from "vue-router";
-import vm from "../index";
 
 // 路由配置
 import { dynamic, login, needlogin, nologin } from "./routerConfig";
@@ -61,7 +60,7 @@ let router = new Router({
     routes: routesArray
 });
 
-//路由跳转前操作
+// 路由跳转前操作
 router.beforeEach((to, form, next) => {
     // 登录过滤
     if (window.intercept && to.meta.login && !window.login) {

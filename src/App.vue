@@ -19,7 +19,7 @@ export default {
             color: STRING.INFO,
             // 默认所有页面有head
             noHead: false,
-            noHeads: [] //["home"]
+            noHeads: [] // ["home"]
         };
     },
     created() {
@@ -29,7 +29,6 @@ export default {
         if (path.match("/login") || path.match("/index")) {
             sessionStorage.setItem("$path", "");
         }
-        this.$store.commit("transition", "");
         sessionStorage.setItem("$path", path);
         this.$router.replace({ name: "index" });
     },

@@ -14,7 +14,7 @@ Vue.component("ui-layout", UiLayout);
 Vue.component("ui-head", UiHead);
 Vue.component("ui-container", UiContainer);
 
-//全局混合
+// 全局混合
 Vue.mixin({
     data() {
         return {

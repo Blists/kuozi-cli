@@ -39,15 +39,15 @@ gulp.task("choose-env", ["replace-variables"], function() {
             });
             rl.question(`\n**********NODE_ENV(test):**********\n1.test\n2.production\n`.yellow, function(answer) {
                 switch (answer) {
-                    case "1":
-                        process.env.NODE_ENV = "test";
-                        break;
-                    case "2":
-                        process.env.NODE_ENV = "production";
-                        break;
-                    default:
-                        process.env.NODE_ENV = "test";
-                        break;
+                case "1":
+                    process.env.NODE_ENV = "test";
+                    break;
+                case "2":
+                    process.env.NODE_ENV = "production";
+                    break;
+                default:
+                    process.env.NODE_ENV = "test";
+                    break;
                 }
                 rl.close();
                 resolve();
@@ -63,15 +63,15 @@ gulp.task("choose-split", ["choose-env"], function() {
         });
         rl.question(`\n**********SPLIT(y/n):**********\n`.yellow, function(answer) {
             switch (answer) {
-                case "y":
-                    process.env.SPLIT = true;
-                    break;
-                case "n":
-                    process.env.SPLIT = false;
-                    break;
-                default:
-                    process.env.SPLIT = false;
-                    break;
+            case "y":
+                process.env.SPLIT = true;
+                break;
+            case "n":
+                process.env.SPLIT = false;
+                break;
+            default:
+                process.env.SPLIT = false;
+                break;
             }
             rl.close();
             resolve();
@@ -91,15 +91,15 @@ gulp.task("choose-hash", ["choose-split"], function() {
             });
             rl.question(`\n**********HASH(y/n):**********\n`.yellow, function(answer) {
                 switch (answer) {
-                    case "y":
-                        process.env.HASH = true;
-                        break;
-                    case "n":
-                        process.env.HASH = false;
-                        break;
-                    default:
-                        process.env.HASH = true;
-                        break;
+                case "y":
+                    process.env.HASH = true;
+                    break;
+                case "n":
+                    process.env.HASH = false;
+                    break;
+                default:
+                    process.env.HASH = true;
+                    break;
                 }
                 rl.close();
                 resolve();
@@ -120,15 +120,15 @@ gulp.task("choose-ugfjs", ["choose-hash"], function() {
             });
             rl.question(`\n**********UGFJS(y/n):**********\n`.yellow, function(answer) {
                 switch (answer) {
-                    case "y":
-                        process.env.UGFJS = true;
-                        break;
-                    case "n":
-                        process.env.UGFJS = false;
-                        break;
-                    default:
-                        process.env.UGFJS = false;
-                        break;
+                case "y":
+                    process.env.UGFJS = true;
+                    break;
+                case "n":
+                    process.env.UGFJS = false;
+                    break;
+                default:
+                    process.env.UGFJS = false;
+                    break;
                 }
                 rl.close();
                 resolve();
@@ -137,7 +137,7 @@ gulp.task("choose-ugfjs", ["choose-hash"], function() {
     });
 });
 
-//生成router文件
+// 生成router文件
 let code = "{}";
 gulp.task("split", ["choose-ugfjs"], function() {
     return new Promise(resolve => {
@@ -195,9 +195,7 @@ gulp.task("split", ["choose-ugfjs"], function() {
                         if (routes[parent].children) {
                             routes[parent].children[name] = route;
                         } else {
-                            routes[parent].children = {
-                                [name]: route
-                            };
+                            routes[parent].children = { [name]: route };
                         }
                     } else if (routes[n].children) {
                         f = isChild(routes[n].children, parent, name, route, flag);
@@ -247,7 +245,7 @@ gulp.task("replace-routers", ["split"], function() {
 gulp.task("dev", ["replace-routers"], function() {
     var app = express();
     var compiler = webpack(require("./webpack.config"));
-    //使用webpack-dev-middleware
+    // 使用webpack-dev-middleware
     var devMiddleware = require("webpack-dev-middleware")(compiler, {
         publicPath: "/",
         stats: {
@@ -265,22 +263,18 @@ gulp.task("dev", ["replace-routers"], function() {
         proxyTable["/" + p.baseURL] = {
             target: p.proxyServer,
             changeOrigin: true,
-            pathRewrite: {
-                ["/" + p.baseURL]: ""
-            }
+            pathRewrite: { ["/" + p.baseURL]: "" }
         };
     }
     Object.keys(proxyTable).forEach(function(context) {
         var options = proxyTable[context];
         if (typeof options === "string") {
-            options = {
-                target: options
-            };
+            options = { target: options };
         }
         app.use(proxyMiddleware(context, options));
     });
 
-    //使用webpack-hot-middleware热加载
+    // 使用webpack-hot-middleware热加载
     var hotMiddleware = require("webpack-hot-middleware")(compiler);
     app.use(hotMiddleware);
 
@@ -299,21 +293,19 @@ gulp.task("dev", ["replace-routers"], function() {
 /**
  * gulp+webpack Build
  */
-//删除dist
+// 删除dist
 gulp.task("clean", ["replace-routers"], function() {
     return gulp
-        .src("./dist", {
-            read: false
-        })
+        .src("./dist", { read: false })
         .pipe(clean());
 });
 
-//复制static目录
+// 复制static目录
 gulp.task("cp", ["clean"], function() {
     return gulp.src("./static/**").pipe(gulp.dest("./dist/static"));
 });
 
-//webpack打包
+// webpack打包
 gulp.task("build", ["cp"], function(cb) {
     webpack(require("./webpack.config"), function(err, stats) {
         if (err) throw err;
@@ -339,7 +331,7 @@ gulp.task("sftp", ["choose-env"], function() {
     return gulp.src("./dist/**").pipe(sftp(ssh[process.env.PROJECT][process.env.NODE_ENV]));
 });
 
-//发布
+// 发布
 gulp.task("publish", ["build"], function() {
     var ssh = require("./config/ssh");
     return gulp.src("./dist/**").pipe(sftp(ssh[process.env.PROJECT][process.env.NODE_ENV]));
