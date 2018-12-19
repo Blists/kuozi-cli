@@ -3,7 +3,7 @@ var math = {
         var r1, r2, m;
 
         try {
-            r1 = num1.toString().split('.')[1].length;
+            r1 = num1.toString().split(".")[1].length;
         } catch (e) {
             r1 = 0;
         }
@@ -19,10 +19,10 @@ var math = {
         return Math.round(num1 * m + num2 * m) / m;
     },
     sub: function(num1, num2) {
-        var r1, r2, m;
+        var r1, r2, m, n;
 
         try {
-            r1 = num1.toString().split('.')[1].length;
+            r1 = num1.toString().split(".")[1].length;
         } catch (e) {
             r1 = 0;
         }
@@ -42,7 +42,7 @@ var math = {
         var t1, t2, r1, r2;
 
         try {
-            t1 = num1.toString().split('.')[1].length;
+            t1 = num1.toString().split(".")[1].length;
         } catch (e) {
             t1 = 0;
         }
@@ -66,17 +66,17 @@ var math = {
         try {
             m += s1.split(".")[1].length;
         } catch (e) {
-
-        };
+            console.warn(e);
+        }
 
         try {
             m += s2.split(".")[1].length;
         } catch (e) {
-
-        };
+            console.warn(e);
+        }
 
         return Number(s1.replace(".", "")) * Number(s2.replace(".", "")) / Math.pow(10, m);
     }
-}
+};
 
 export default math;

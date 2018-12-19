@@ -4,7 +4,6 @@ var merge = require("webpack-merge");
 var HtmlWebpackPlugin = require("html-webpack-plugin");
 var ExtractTextPlugin = require("extract-text-webpack-plugin");
 var UglifyJSPlugin = require("uglifyjs-webpack-plugin");
-var CompressionPlugin = require("compression-webpack-plugin");
 
 var othername = function(f) {
     var hash = JSON.parse(process.env.HASH) ? ".[hash:7]" : "";
@@ -23,25 +22,19 @@ var chunkFilename = function() {
     return `./chunk/[id]${hash}.js`;
 };
 
-//webpack基础配置
+// webpack基础配置
 var basicConfig = {
-    entry: {
-        app: "./src/index.js"
-    },
+    entry: { app: "./src/index.js" },
     resolve: {
         extensions: [".js", ".vue"],
-        alias: {
-            "@src": path.resolve(__dirname, "./src")
-        }
+        alias: { "@src": path.resolve(__dirname, "./src") }
     },
     module: {
         rules: [
             {
                 test: /\.js$/,
                 exclude: /(node_modules|bower_components)/,
-                use: {
-                    loader: "babel-loader"
-                }
+                use: { loader: "babel-loader" }
             },
             {
                 test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
@@ -54,16 +47,12 @@ var basicConfig = {
             {
                 test: /\.(woff2?|eot|ttf|otf)(\?.*)?$/,
                 loader: "file-loader",
-                options: {
-                    name: othername("fonts")
-                }
+                options: { name: othername("fonts") }
             },
             {
                 test: /\.ico$/,
                 loader: "file-loader",
-                options: {
-                    name: "./[name].ico"
-                }
+                options: { name: "./[name].ico" }
             }
         ]
     },
@@ -78,15 +67,13 @@ var basicConfig = {
     ]
 };
 
-//webpack开发环境配置
+// webpack开发环境配置
 var devConfig = {
-    entry: {
-        app: ["./src/index.js", "webpack-hot-middleware/client?noInfo=true&reload=true"]
-    },
+    entry: { app: ["./src/index.js", "webpack-hot-middleware/client?noInfo=true&reload=true"] },
     output: {
         path: path.resolve(__dirname, "./dist"),
-        filename: filename(), //"./[name].[hash].js",
-        chunkFilename: chunkFilename() //'./chunk/[id].[hash].js'
+        filename: filename(), // "./[name].[hash].js",
+        chunkFilename: chunkFilename() // './chunk/[id].[hash].js'
     },
     devtool: "#source-map",
     module: {
@@ -94,18 +81,14 @@ var devConfig = {
             {
                 test: /\.vue$/,
                 loader: "vue-loader",
-                options: {
-                    cssSourceMap: true
-                }
+                options: { cssSourceMap: true }
             },
             {
                 test: /\.css$/,
                 use: [
                     {
                         loader: "style-loader",
-                        options: {
-                            sourceMap: true
-                        }
+                        options: { sourceMap: true }
                     },
                     {
                         loader: "css-loader",
@@ -116,9 +99,7 @@ var devConfig = {
                     },
                     {
                         loader: "postcss-loader",
-                        options: {
-                            sourceMap: true
-                        }
+                        options: { sourceMap: true }
                     }
                 ]
             },
@@ -127,9 +108,7 @@ var devConfig = {
                 use: [
                     {
                         loader: "style-loader",
-                        options: {
-                            sourceMap: true
-                        }
+                        options: { sourceMap: true }
                     },
                     {
                         loader: "css-loader",
@@ -140,15 +119,11 @@ var devConfig = {
                     },
                     {
                         loader: "postcss-loader",
-                        options: {
-                            sourceMap: true
-                        }
+                        options: { sourceMap: true }
                     },
                     {
                         loader: "less-loader",
-                        options: {
-                            sourceMap: true
-                        }
+                        options: { sourceMap: true }
                     }
                 ]
             },
@@ -157,9 +132,7 @@ var devConfig = {
                 use: [
                     {
                         loader: "style-loader",
-                        options: {
-                            sourceMap: true
-                        }
+                        options: { sourceMap: true }
                     },
                     {
                         loader: "css-loader",
@@ -170,15 +143,11 @@ var devConfig = {
                     },
                     {
                         loader: "postcss-loader",
-                        options: {
-                            sourceMap: true
-                        }
+                        options: { sourceMap: true }
                     },
                     {
                         loader: "sass-loader",
-                        options: {
-                            sourceMap: true
-                        }
+                        options: { sourceMap: true }
                     }
                 ]
             }
@@ -196,7 +165,7 @@ var devConfig = {
     ]
 };
 
-//webpack生产环境配置
+// webpack生产环境配置
 var buildConfig = {
     output: {
         path: path.resolve(__dirname, "./dist"),
@@ -223,7 +192,7 @@ var buildConfig = {
                 }
             },
             {
-                //配合ExtractTextPlugin使用
+                // 配合ExtractTextPlugin使用
                 test: /\.css$/,
                 loader: ExtractTextPlugin.extract({
                     fallback: "style-loader",
@@ -231,7 +200,7 @@ var buildConfig = {
                 })
             },
             {
-                //配合ExtractTextPlugin使用
+                // 配合ExtractTextPlugin使用
                 test: /\.less$/,
                 loader: ExtractTextPlugin.extract({
                     fallback: "style-loader",
@@ -239,7 +208,7 @@ var buildConfig = {
                 })
             },
             {
-                //配合ExtractTextPlugin使用
+                // 配合ExtractTextPlugin使用
                 test: /\.less$/,
                 loader: ExtractTextPlugin.extract({
                     fallback: "style-loader",
@@ -249,7 +218,7 @@ var buildConfig = {
         ]
     },
     plugins: [
-        //css单独出个文件
+        // css单独出个文件
         new ExtractTextPlugin({
             filename: cssFilename(),
             allChunks: true
@@ -267,7 +236,7 @@ var buildConfig = {
         // 分js打包
         new webpack.optimize.CommonsChunkPlugin({
             name: "vendor",
-            minChunks: function(module, count) {
+            minChunks: function(module) {
                 // any required modules inside node_modules are extracted to vendor
                 return module.resource && /\.js$/.test(module.resource) && module.resource.indexOf(path.join(__dirname, "./node_modules")) === 0;
             }
@@ -279,11 +248,7 @@ var plugins = [];
 if (JSON.parse(process.env.UGFJS)) {
     plugins.push(
         new UglifyJSPlugin({
-            uglifyOptions: {
-                compress: {
-                    warnings: false
-                }
-            },
+            uglifyOptions: { compress: { warnings: false } },
             sourceMap: false
         })
     );
@@ -291,12 +256,8 @@ if (JSON.parse(process.env.UGFJS)) {
 
 var config = {
     dev: devConfig,
-    test: merge(buildConfig, {
-        plugins: plugins
-    }),
-    production: merge(buildConfig, {
-        plugins: plugins
-    })
+    test: merge(buildConfig, { plugins: plugins }),
+    production: merge(buildConfig, { plugins: plugins })
 };
 
 module.exports = merge(basicConfig, config[process.env.NODE_ENV]);

@@ -2,7 +2,7 @@ import { INFO } from "../../config/project/project.env";
 // 常量
 const STRING = {
     INFO: INFO,
-    TOKEN: "$token",
+    TOKEN: "$token-desktop-tab",
     HOME: "home"
 };
 export { STRING };

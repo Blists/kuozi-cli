@@ -7,7 +7,7 @@ import Vue from "vue";
  * v-focus
  * 元素获取焦点
  */
-Vue.directive('focus', {
+Vue.directive("focus", {
     // 当绑定元素插入到 DOM 中。
     inserted(el) {
         // 聚焦元素
@@ -15,7 +15,7 @@ Vue.directive('focus', {
     }
 });
 
-Vue.directive('scroll-bottom', {
+Vue.directive("scroll-bottom", {
     inserted(el) {
         setTimeout(function() {
             el.scrollTop = el.scrollHeight;
@@ -33,7 +33,7 @@ Vue.directive('scroll-bottom', {
     }
 });
 
-Vue.directive('scroll-head', {
+Vue.directive("scroll-head", {
     inserted(el) {
         el.addEventListener("scroll", () => {
             let head = document.getElementById("head");
@@ -49,12 +49,12 @@ Vue.directive('scroll-head', {
                 }
 
             }
-        })
+        });
     }
 });
 
 
-//移动端滑动
+// 移动端滑动
 var touchStart = function(e, el) {
     var touches = e.touches[0];
     el.dataset.tsx = touches.pageX;
@@ -73,13 +73,13 @@ var touchEnd = function(e, el, callback) {
  * v-swipe-left
  * 左滑
  */
-Vue.directive('swipe-left', {
+Vue.directive("swipe-left", {
     acceptStatement: true,
     bind: function(el, binding) {
         var swipeLeft = function(cx, cy, ct) {
             if (Math.abs(cx) > Math.abs(cy) && cx < 0 && ct > 10) {
                 try {
-                    if (typeof binding.value === 'function') {
+                    if (typeof binding.value === "function") {
                         (binding.value)();
                     } else {
                         (binding.value.method)(binding.value.params);
@@ -101,13 +101,13 @@ Vue.directive('swipe-left', {
  * v-swipe-left
  * 右滑
  */
-Vue.directive('swipe-right', {
+Vue.directive("swipe-right", {
     acceptStatement: true,
     bind: function(el, binding) {
         var swipeLeft = function(cx, cy, ct) {
             if (Math.abs(cx) > Math.abs(cy) && cx > 0 && ct > 10) {
                 try {
-                    if (typeof binding.value === 'function') {
+                    if (typeof binding.value === "function") {
                         (binding.value)();
                     } else {
                         (binding.value.method)(binding.value.params);

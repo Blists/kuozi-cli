@@ -9,9 +9,7 @@ axios.defaults.headers["x-requested-with"] = "XMLHttpRequest";
 let fetch = function(method, baseURL, url, data, options, noLoading, noToast, vue) {
     return new Promise((resolve, reject) => {
         let token = localStorage.getItem(STRING.TOKEN);
-        let o = options || {
-            headers: {}
-        };
+        let o = options || { headers: {} };
         o.method = method;
         o.baseURL = baseURL;
         o.url = url;
@@ -19,13 +17,13 @@ let fetch = function(method, baseURL, url, data, options, noLoading, noToast, vu
         o.headers = o.headers || {};
         o.headers["x-token"] = token;
         if (!noLoading) {
-            // vue && vue.$$loading();
+            vue && vue.$$loading();
         }
         axios(o)
             .then(data => {
                 let res = data.data;
                 if (!noLoading) {
-                    // vue && vue.$loaded();
+                    vue && vue.$loaded();
                 }
                 if (res.code == 0) {
                     if (res.data === null || res.data === undefined) {
@@ -54,46 +52,46 @@ let fetch = function(method, baseURL, url, data, options, noLoading, noToast, vu
                 if (!noToast) {
                     if (error.response && error.response.status) {
                         switch (error.response.status) {
-                            case 404:
-                                vue &&
+                        case 404:
+                            vue &&
                                     vue.$message &&
                                     vue.$message.error({
                                         showClose: true,
                                         message: "错误代码404",
                                         type: error
                                     });
-                                break;
-                            case 502:
-                                vue &&
+                            break;
+                        case 502:
+                            vue &&
                                     vue.$message.error({
                                         showClose: true,
                                         message: "服务器正在升级,请稍后再试",
                                         type: error
                                     });
-                                break;
-                            case 504:
-                                vue &&
+                            break;
+                        case 504:
+                            vue &&
                                     vue.$message &&
                                     vue.$message.error({
                                         showClose: true,
                                         message: "网络已断开",
                                         type: error
                                     });
-                                break;
-                            default:
-                                vue &&
+                            break;
+                        default:
+                            vue &&
                                     vue.$message &&
                                     vue.$message.error({
                                         showClose: true,
                                         message: `请求服务异常,请稍后再试（${error.response.status}）`,
                                         type: error
                                     });
-                                break;
+                            break;
                         }
                     }
                 }
                 if (!noLoading) {
-                    // vue && vue.$loaded();
+                    vue && vue.$loaded();
                 }
                 reject();
             });
