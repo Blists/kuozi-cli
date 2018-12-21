@@ -1,6 +1,6 @@
 <template>
     <div class="ui-side" :class="{collapse:collapse}">
-        <el-menu default-active="home" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose" :collapse="collapse">
+        <el-menu :default-active="defaultActive" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose" :collapse="collapse">
             <el-menu-item index="home" @click.native="$to({name:'home'})">
                 <i class="fa fa-home fa-fw fa-lg"></i>
                 <span slot="title">首页</span>
@@ -32,6 +32,11 @@ export default {
         },
         handleClose(key, keyPath) {
             console.log(key, keyPath);
+        }
+    },
+    computed: {
+        defaultActive() {
+            return this.$route.name;
         }
     }
 };

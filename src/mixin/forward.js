@@ -11,12 +11,16 @@ export default {
                         localStorage.setItem(STRING.TOKEN, token);
                     }
                 }
+                let obj = { name: STRING.HOME };
                 let path = sessionStorage.getItem("$path");
                 sessionStorage.clear("$path");
                 if (path && path != "/" && !/^\/index/.test(path) && !/^\/login/.test(path)) {
-                    this.$router.push({ path });
+                    obj = { path };
+                }
+                if (this.$route.query.forwardReplace) {
+                    this.$router.replace(obj);
                 } else {
-                    this.$router.push({ name: STRING.HOME });
+                    this.$router.push(obj);
                 }
             }
         }

@@ -33,7 +33,7 @@ let fetch = function(method, baseURL, url, data, options, noLoading, noToast, vu
                     }
                 } else {
                     if (res.code == 999 && vue.$route.name != "index") {
-                        vue && vue.$to({ name: "login", query: { path: vue.$route.fullPath } });
+                        vue && vue.$to({ name: "login", query: { path: vue.$route.fullPath, forwardReplace: true } });
                     } else {
                         if (!noToast) {
                             vue &&

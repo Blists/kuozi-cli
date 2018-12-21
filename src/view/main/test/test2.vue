@@ -56,7 +56,7 @@
 </template>
 
 <script>
-import UiPage from "../../components/UiPage.vue";
+import UiPage from "../../../components/UiPage.vue";
 export default {
     components: { UiPage },
     data() {

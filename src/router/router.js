@@ -57,13 +57,13 @@ let allRoutes = [
     {
         name: "index",
         path: "/index",
-        meta: { login },
+        meta: { login: false },
         component: Index
     },
     {
         name: "login",
         path: "/login",
-        meta: { login },
+        meta: { login: false },
         component: Login
     },
     {
@@ -93,7 +93,7 @@ router.beforeEach((to, form, next) => {
     // 登录过滤
     if (window.intercept && to.meta.login && !window.login) {
         sessionStorage.setItem("$path", to.fullPath);
-        next({ name: "login" });
+        next({ name: "login", query: { forwardReplace: true } });
     } else {
         next();
     }
