@@ -65,7 +65,7 @@ router.beforeEach((to, form, next) => {
     // 登录过滤
     if (window.intercept && to.meta.login && !window.login) {
         sessionStorage.setItem("$path", to.fullPath);
-        next({ name: "login" });
+        next({ name: "login", query: { forwardReplace: true } });
     } else {
         next();
     }
