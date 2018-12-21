@@ -20,35 +20,31 @@ let router = new Router({
         {
             name: "index",
             path: "/index",
-            component: index
+            component: index,
+            meta: { login: false }
         },
         {
             name: "login",
             path: "/login",
-            component: Login
+            component: Login,
+            meta: { login: false }
         },
         {
             name: "home",
             path: "/home",
             component: home,
-            meta: {
-                login: true
-            }
+            meta: { login }
         }
     ]
 });
-//路由跳转钱操作
+
+// 路由跳转前操作
 router.beforeEach((to, form, next) => {
-    if (login && window.intercept && to.meta.login && !window.login) {
-        next({ name: "login", query: { path: to.fullPath } });
+    // 登录过滤
+    if (window.intercept && to.meta.login && !window.login) {
+        sessionStorage.setItem("$path", to.fullPath);
+        next({ name: "login", query: { forwardReplace: true } });
     } else {
-        if (to.fullPath.match("http")) {
-            console.log(to.fullPath.replace("/", ""));
-            window.location.href = to.fullPath.replace("/", "");
-        }
-        if (to.fullPath.match("www")) {
-            window.location.href = to.fullPath.replace("/", "http://");
-        }
         next();
     }
 });
