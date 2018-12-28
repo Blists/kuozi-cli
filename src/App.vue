@@ -15,7 +15,7 @@ export default {
             sessionStorage.setItem("$path", "");
         }
         sessionStorage.setItem("$path", path);
-        this.$router.replace({ name: "index" });
+        this.$router.replace({ name: "index", query: { forwardReplace: true } });
     },
     computed: {
         spinner() {
