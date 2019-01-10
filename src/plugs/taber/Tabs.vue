@@ -111,7 +111,7 @@ export default {
                 });
 
                 tab.content = instance;
-                instance.$el.classList.add("tabs-content");
+                instance.$el.classList.add("tabs-content", "none");
             }
         },
         clickTab(tab) {
@@ -228,7 +228,8 @@ export default {
                 if (tabIdGen(ftab.name, ftab.key) !== tabIdGen(tab.name, tab.key)) {
                     this.$set(ftab, "active", false);
                     if (ftab.content && ftab.content.$el) {
-                        ftab.content.$el.classList.remove("active");
+                        // ftab.content.$el.classList.remove("active");
+                        ftab.content.$el.classList.add("none");
                     }
                 }
             });
@@ -239,7 +240,8 @@ export default {
             }
             promise.then(() => {
                 if (tab.active && tab.content) {
-                    tab.content.$el.classList.add("active");
+                    // tab.content.$el.classList.add("active");
+                    tab.content.$el.classList.remove("none");
                     tab.promise = null;
                 }
             });
@@ -444,11 +446,11 @@ export default {
 .tabs-content-wrapper {
     position: relative;
     flex: 1;
-    overflow: auto;
+    overflow: hidden;
     .tabs-content {
-        display: none;
-        overflow: auto;
-
+        &.none{
+            display: none;
+        }
         &.active {
             display: block;
         }
