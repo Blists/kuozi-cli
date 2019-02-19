@@ -8,11 +8,11 @@ Vue.use(Vuex);
 
 const store = new Vuex.Store({
     state: {
-        //加载中
+        // 加载中
         spinner: true,
         loading: false,
         // 过渡模式
-        transition: false
+        transition: ""
     },
     mutations: {
         spinner(state, param) {
