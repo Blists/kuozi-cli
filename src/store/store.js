@@ -3,21 +3,20 @@
  */
 import Vue from "vue";
 import Vuex from "vuex";
-import pbMessagePlugin from "./plugins/pbMessage.js";
-
-const pbMessage = pbMessagePlugin();
+import storage from "store";
+import socket from "./modules/socket";
+import socketListener from "./plugins/socketListener";
 
 Vue.use(Vuex);
 
 const store = new Vuex.Store({
     state: {
-        username: "pb",
         //加载中
         spinner: true,
         loading: false,
-        // 我的自选基金
-        myfund: {},
-        pbMessageNum: 0
+        // 过渡模式
+        transition: false,
+        showTaber: true
     },
     mutations: {
         spinner(state, param) {
@@ -28,15 +27,18 @@ const store = new Vuex.Store({
         },
         loaded(state) {
             state.loading = false;
+        },
+        transition(state, p) {
+            state.transition = p;
+        },
+        showTaber(state, p) {
+            state.showTaber = p;
         }
     },
-    actions: {
-
-    },
-    getters: {
-
-    },
-    plugins: [pbMessage]
+    actions: {},
+    getters: {},
+    modules: { socket },
+    plugins: [socketListener()]
 });
 
 export default store;

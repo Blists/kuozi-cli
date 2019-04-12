@@ -1,26 +1,23 @@
 <template>
-    <div class="full-height">
-    </div>
+    <ui-layout no-home>
+        <ui-container>
+            <router-view></router-view>
+        </ui-container>
+        <ui-taber></ui-taber>
+    </ui-layout>
 </template>
+
 <script>
+import UiTaber from "../components/UiTaber.vue";
 export default {
-    components: {
-        
-    },
-    data() {
-        return {}
-    },
+    components: { UiTaber },
     created() {
-        this.$get("auth")
-    },
-    methods: {
-        
+        if (this.$route.name == "home") {
+            this.$router.replace({ name: "article" });
+        }
     }
-}
+};
 </script>
+
 <style lang="less">
-@import "./../styles/common.less";
-.aaa{
-    font-size: 15px;
-}
 </style>

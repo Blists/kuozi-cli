@@ -1,212 +1,224 @@
-var path = require("path");
-var webpack = require("webpack");
-var merge = require("webpack-merge");
-var HtmlWebpackPlugin = require("html-webpack-plugin");
-var ExtractTextPlugin = require("extract-text-webpack-plugin");
+const path = require("path");
+const webpack = require("webpack");
+const merge = require("webpack-merge");
+const HtmlWebpackPlugin = require("html-webpack-plugin");
+// css分离
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+// js压缩
+const TerserJSPlugin = require("terser-webpack-plugin");
+// css压缩
+const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
+// vue-loader15插件
+const VueLoaderPlugin = require("vue-loader/lib/plugin");
+// webpack clean插件
+const CleanWebpackPlugin = require("clean-webpack-plugin");
+// 静态复制
+const CopyPlugin = require("copy-webpack-plugin");
+// 打包分析
+const BundleAnalyzerPlugin = require("webpack-bundle-analyzer").BundleAnalyzerPlugin;
 
-//webpack基础配置
-var basicConfig = {
-    entry: {
-        app: "./src/main.js"
-    },
-    output: {
-        path: path.resolve(__dirname, "./dist")
-    },
-    resolve: {
-        extensions: [".js", ".vue"]
-    },
-    module: {
-        rules: [{
-            test: /\.js$/,
-            exclude: /(node_modules|bower_components)/,
-            use: {
-                loader: 'babel-loader',
-                options: {
-                    presets: ['es2015']
-                }
-            }
-        }, {
-            test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
-            loader: 'url-loader',
-            options: {
-                limit: 10000,
-                name: './img/[name].[hash:7].[ext]'
-            }
-        }, {
-            test: /\.(woff2?|eot|ttf|otf)(\?.*)?$/,
-            loader: 'file-loader',
-            options: {
-                limit: 10000,
-                name: './fonts/[name].[hash:7].[ext]'
-            }
-        }]
-    }
-}
+const contenthash = () => {
+    return global.HASH ? ".[contenthash]" : "";
+};
 
-//webpack开发环境配置
-var devConfig = {
-    entry: {
-        app: ["./src/main.js", "webpack-hot-middleware/client?noInfo=true&reload=true"]
-    },
-    output: {
-        filename: "./[name].[hash].js",
-        chunkFilename: path.join('./[id].[hash].js')
-    },
-    devtool: '#source-map',
-    module: {
-        rules: [{
-            test: /\.vue$/,
-            loader: 'vue-loader',
-            options: {
-                cssSourceMap: true
-            }
-        }, {
-            test: /\.css$/,
-            use: [{
-                loader: "style-loader",
-                options: {
-                    sourceMap: true
-                }
-            }, {
-                loader: 'css-loader',
-                options: {
-                    sourceMap: true,
-                    importLoaders: 1
-                }
-            }]
-        }, {
-            test: /\.less$/,
-            use: [{
-                loader: "vue-style-loader",
-                options: {
-                    sourceMap: true
-                }
-            }, {
-                loader: "css-loader",
-                options: {
-                    sourceMap: true
-                }
-            }, {
-                loader: "less-loader",
-                options: {
-                    sourceMap: true
-                }
-            }]
-        }]
-    },
-    plugins: [
-        new webpack.HotModuleReplacementPlugin(),
-        new webpack.NoEmitOnErrorsPlugin(),
-        // https://github.com/ampedandwired/html-webpack-plugin
-        new HtmlWebpackPlugin({
-            filename: 'index.html',
-            template: 'index.html',
-            inject: true
-        }),
-        //开发环境
-        new webpack.DefinePlugin({
-            'process.env': {
-                NODE_ENV: '"dev"'
-            }
-        })
-    ]
-}
-
-//webpack生产环境配置
-var buildConfig = {
-    output: {
-        filename: "./[name].[chunkhash].js",
-        chunkFilename: path.join('./[id].[chunkhash].js')
-    },
-    module: {
-        rules: [{
-            test: /\.vue$/,
-            loader: 'vue-loader',
-            options: {
-                sourceMap: true,
-                loaders: {
-                    css: ExtractTextPlugin.extract({
-                        use: ['css-loader', 'postcss-loader'],
-                        fallback: 'vue-style-loader' // <- this is a dep of vue-loader, so no need to explicitly install if using npm3
-                    }),
-                    less: ExtractTextPlugin.extract({
-                        use: ['css-loader', 'less-loader', 'postcss-loader'],
-                        fallback: 'vue-style-loader' // <- this is a dep of vue-loader, so no need to explicitly install if using npm3
-                    })
-                }
-            }
-        }, {
-            //配合ExtractTextPlugin使用
-            test: /\.css$/,
-            loader: ExtractTextPlugin.extract({
-                use: ['css-loader', 'postcss-loader'],
-                fallback: 'style-loader'
-            })
-        }, {
-            //配合ExtractTextPlugin使用
-            test: /\.less$/,
-            loader: ExtractTextPlugin.extract({
-                use: ['css-loader', 'less-loader', 'postcss-loader'],
-                fallback: 'style-loader'
-            })
-        }]
-    },
-    plugins: [
-        //css单独出个文件
-        new ExtractTextPlugin("./style.[contenthash].css"),
-        new HtmlWebpackPlugin({
-            template: "./index.html",
-            inject: true,
-            minify: {
-                removeComments: true,
-                collapseWhitespace: true,
-                removeAttributeQuotes: true
+var webpackConfig = {
+    // webpack基础配置
+    basicConfig: {
+        entry: { app: "./src/index.js" },
+        output: { path: path.resolve(__dirname, "dist") },
+        resolve: {
+            extensions: [".js", ".vue"],
+            alias: {
+                vue: "vue/dist/vue.esm.js",
+                "@src": path.resolve(__dirname, "./src")
             },
-            chunksSortMode: 'dependency'
-        }),
-        // 分js打包
-        new webpack.optimize.CommonsChunkPlugin({
-            name: 'vendor',
-            minChunks: function (module, count) {
-                // any required modules inside node_modules are extracted to vendor
-                return (
-                    module.resource &&
-                    /\.js$/.test(module.resource) &&
-                    module.resource.indexOf(
-                        path.join(__dirname, './node_modules')
-                    ) === 0
-                )
+        },
+        module: {
+            rules: [
+                {
+                    test: /\.js$/,
+                    exclude: /(node_modules)/,
+                    // loader: "babel-loader"
+                    use: [
+                        "babel-loader",
+                        {
+                            loader: "string-replace-loader",
+                            options: {
+                                search: "ROUTECONFIG",
+                                replace: JSON.stringify(global.ROUTECONFIG).replace(/"\$/g, "").replace(/\$"/g, ""),
+                            }
+                        }
+                    ]
+                },
+                {
+                    test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
+                    loader: "url-loader",
+                    options: {
+                        limit: 10000,
+                        name: "./img/[name]" + contenthash() + ".[ext]"
+                    }
+                },
+                {
+                    test: /\.(woff2?|eot|ttf|otf)(\?.*)?$/,
+                    loader: "file-loader",
+                    options: {
+                        limit: 10000,
+                        name: "./fonts/[name]" + contenthash() + ".[ext]"
+                    }
+                }
+            ]
+        },
+        optimization: {
+            runtimeChunk: "single",
+            splitChunks: {
+                chunks: "async",
+                cacheGroups: {
+                    vendor: {
+                        name: "vendors",
+                        chunks: "all",
+                        test: /[\\/]node_modules[\\/]/,
+                    },
+                    styles: {
+                        name: "styles",
+                        test: /\.css$/,
+                        enforce: true
+                    },
+                    commons: {
+                        name: "commons",
+                        chunks: "async",
+                        minChunks: 2
+                    }
+                }
             }
-        }),
-
-    ]
-};
-
-var config = {
-    dev: devConfig,
-    test: merge(buildConfig, {
+        },
         plugins: [
+            new VueLoaderPlugin(),
             new webpack.DefinePlugin({
-                'process.env': {
-                    NODE_ENV: JSON.stringify(process.env.NODE_ENV)
+                "process.env": {
+                    PROJECT: JSON.stringify(global.PROJECT),
+                    ENVJS: JSON.stringify(global.ENVJS),
+                    ASYNCROUTE: JSON.stringify(global.ASYNCROUTE),
+                    // ROUTECONFIG: JSON.stringify(global.ROUTECONFIG).replace(/"\$/g, "").replace(/\$"/g, ""),
                 }
             })
         ]
-    }),
-    pro: merge(buildConfig, {
+    },
+
+    // webpack开发配置
+    devConfig: {
+        mode: "development",
+        output: {
+            filename: "./[name]" + contenthash() + ".js",
+            chunkFilename: "./[name]" + contenthash() + ".js"
+        },
+        devtool: "#source-map",
+        module: {
+            rules: [
+                {
+                    test: /\.vue$/,
+                    loader: "vue-loader",
+                    options: { cssSourceMap: true }
+                },
+                {
+                    test: /\.css$/,
+                    use: [
+                        {
+                            loader: "vue-style-loader",
+                            options: { sourceMap: true }
+                        },
+                        {
+                            loader: "css-loader",
+                            options: { sourceMap: true, importLoaders: 1 }
+                        },
+                        { loader: "postcss-loader", options: { sourceMap: true } }
+                    ]
+                },
+                {
+                    test: /\.less$/,
+                    use: [
+                        {
+                            loader: "vue-style-loader",
+                            options: { sourceMap: true }
+                        },
+                        { loader: "css-loader", options: { sourceMap: true } },
+                        { loader: "postcss-loader", options: { sourceMap: true } },
+                        { loader: "less-loader", options: { sourceMap: true } }
+                    ]
+                }
+            ]
+        },
+
+        plugins: [new HtmlWebpackPlugin({ template: "./index.html", hash: true })]
+    },
+    // webpack打包配置
+    buildConfig: {
+        mode: "production",
+        output: {
+            filename: "./[name]" + contenthash() + ".js",
+            chunkFilename: "./chunks/[name]" + contenthash() + ".js"
+        },
+        module: {
+            rules: [
+                {
+                    test: /\.vue$/,
+                    loader: "vue-loader"
+                },
+                {
+                    test: /\.css$/,
+                    use: [
+                        {
+                            loader: MiniCssExtractPlugin.loader,
+                            options: { publicPath: "../" }
+                        },
+                        "css-loader",
+                        "postcss-loader"
+                    ]
+                },
+                {
+                    test: /\.less$/,
+                    use: [
+                        {
+                            loader: MiniCssExtractPlugin.loader,
+                            options: { publicPath: "../" }
+                        },
+                        "css-loader",
+                        "postcss-loader",
+                        "less-loader"
+                    ]
+                }
+            ]
+        },
+        optimization: { minimizer: [] },
         plugins: [
-            new webpack.DefinePlugin({
-                'process.env': {
-                    NODE_ENV: JSON.stringify(process.env.NODE_ENV)
-                }
+            new CleanWebpackPlugin(),
+            new CopyPlugin([{ from: path.resolve(__dirname, "./static/**") }]),
+            new HtmlWebpackPlugin({
+                template: "./index.html",
+                inject: true,
+                minify: {
+                    removeComments: true,
+                    collapseWhitespace: true,
+                    removeAttributeQuotes: true
+                },
+                chunksSortMode: "dependency"
             }),
-            new webpack.optimize.UglifyJsPlugin({
-                compress: {
-                    warnings: false
-                }
-            }),
+            new webpack.HashedModuleIdsPlugin(),
+            // css单独出个文件
+            new MiniCssExtractPlugin({
+                filename: "./style" + contenthash() + ".css",
+                chunkFilename: "./chunks/[name]" + contenthash() + ".css"
+            })
         ]
-    }),
+    }
 };
 
-module.exports = merge(basicConfig, config[process.env.NODE_ENV]);
+if (global.ZIP) {
+    // 压缩代码
+    webpackConfig.buildConfig.optimization.minimizer.push(...[new TerserJSPlugin({}), new OptimizeCSSAssetsPlugin({})]);
+}
+if (global.ANALYZER) {
+    // 模块分析
+    webpackConfig.buildConfig.plugins.push(new BundleAnalyzerPlugin());
+}
+
+module.exports = merge(webpackConfig.basicConfig, webpackConfig[global.WEBPACKCONFIG]);

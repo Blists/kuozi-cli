@@ -1,0 +1,21 @@
+<template>
+    <div class="ui-root">
+        <slot></slot>
+    </div>
+</template>
+
+<script>
+export default {
+    mounted() {
+        document.body.appendChild(this.$el);
+    },
+    beforeDestroy() {
+        try {
+            document.body.removeChild(this.$el);
+        } catch (error) {}
+    }
+};
+</script>
+
+<style>
+</style>
