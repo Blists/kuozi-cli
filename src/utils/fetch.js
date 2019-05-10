@@ -99,7 +99,7 @@ let gioTrack = (restKey, url, params) => {
     if (!urlObj.ignoreParams && params) {
         urlObj.params = params;
     }
-    gio && gio("track", "action", { name: urlObj.name });
+    // gio && gio("track", "action", { name: urlObj.name });
 };
 
 export { fetch, $get, $post };

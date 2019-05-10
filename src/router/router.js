@@ -7,12 +7,10 @@ import Router from "vue-router";
 // 是否登录控制
 import { dynamic, login, needlogin, nologin } from "./routerConfig";
 
+import routes from "./routers";
+
 Vue.use(Router);
 
-// let { routes } = require("./router." + (process.env.SPLIT ? "split" : "full") + ".js");
-// let { routes } = process.env.ASYNCROUTE ? process.env.RO2UTECONFIG : require("./router.full.js");
-// let routes = process.env.RO2UTECONFIG;
-let routes = ROUTECONFIG;
 let routesArray = [];
 let routesObj2Array = (array, obj) => {
     for (let k in obj) {
@@ -37,13 +35,6 @@ let routesObj2Array = (array, obj) => {
         if (nologin[k]) {
             obj[k].meta = obj[k].met || {};
             obj[k].meta.login = false;
-        }
-        if (obj[k].name == "article") {
-            array.push({
-                path: "/",
-                meta: obj[k].meta,
-                component: obj[k].component
-            });
         }
         array.push(obj[k]);
     }

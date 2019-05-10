@@ -29,7 +29,7 @@ var webpackConfig = {
         resolve: {
             extensions: [".js", ".vue"],
             alias: {
-                vue: "vue/dist/vue.esm.js",
+                // vue: "vue/dist/vue.esm.js",
                 "@src": path.resolve(__dirname, "./src")
             },
         },
@@ -38,14 +38,18 @@ var webpackConfig = {
                 {
                     test: /\.js$/,
                     exclude: /(node_modules)/,
-                    // loader: "babel-loader"
+                    loader: "babel-loader"
+                },
+                {
+                    test: /routers\.js$/,
+                    exclude: /(node_modules)/,
                     use: [
                         "babel-loader",
                         {
                             loader: "string-replace-loader",
                             options: {
-                                search: "ROUTECONFIG",
-                                replace: JSON.stringify(global.ROUTECONFIG).replace(/"\$/g, "").replace(/\$"/g, ""),
+                                search: "process.env.ROUTES",
+                                replace: global.ROUTES,
                             }
                         }
                     ]
@@ -81,12 +85,8 @@ var webpackConfig = {
                     styles: {
                         name: "styles",
                         test: /\.css$/,
+                        chunks: "all",
                         enforce: true
-                    },
-                    commons: {
-                        name: "commons",
-                        chunks: "async",
-                        minChunks: 2
                     }
                 }
             }
@@ -96,9 +96,7 @@ var webpackConfig = {
             new webpack.DefinePlugin({
                 "process.env": {
                     PROJECT: JSON.stringify(global.PROJECT),
-                    ENVJS: JSON.stringify(global.ENVJS),
-                    ASYNCROUTE: JSON.stringify(global.ASYNCROUTE),
-                    // ROUTECONFIG: JSON.stringify(global.ROUTECONFIG).replace(/"\$/g, "").replace(/\$"/g, ""),
+                    ENVJS: JSON.stringify(global.ENVJS)
                 }
             })
         ]
@@ -142,9 +140,23 @@ var webpackConfig = {
                         },
                         { loader: "css-loader", options: { sourceMap: true } },
                         { loader: "postcss-loader", options: { sourceMap: true } },
-                        { loader: "less-loader", options: { sourceMap: true } }
+                        {
+                            loader: "less-loader",
+                            options: {
+                                sourceMap: true,
+                                plugins: [{
+                                    install: (lessObj, pluginManager) => {
+                                        pluginManager.addPreProcessor({
+                                            process: function (lessCode) {
+                                                return lessCode.replace("process.env.PROJECT", global.PROJECT);
+                                            }
+                                        }, 2000);
+                                    }
+                                }]
+                            }
+                        }
                     ]
-                }
+                },
             ]
         },
 
@@ -184,6 +196,31 @@ var webpackConfig = {
                         "css-loader",
                         "postcss-loader",
                         "less-loader"
+                    ]
+                },
+                {
+                    test: /project\.variables\.less$/,
+                    use: [
+                        {
+                            loader: MiniCssExtractPlugin.loader,
+                            options: { publicPath: "../" }
+                        },
+                        "css-loader",
+                        "postcss-loader",
+                        {
+                            loader: "less-loader",
+                            options: {
+                                plugins: [{
+                                    install: (lessObj, pluginManager) => {
+                                        pluginManager.addPreProcessor({
+                                            process: function (lessCode) {
+                                                return lessCode.replace("process.env.PROJECT", global.PROJECT);
+                                            }
+                                        }, 2000);
+                                    }
+                                }]
+                            }
+                        }
                     ]
                 }
             ]

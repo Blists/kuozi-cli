@@ -6,12 +6,6 @@ var inquirer = require("inquirer");
 
 var gulpSftp = require("gulp-sftp");
 
-var project = {
-    devPort: 8081,
-    host: "localhost"
-};
-var ssh = require("./config/ssh");
-
 const webpackDevServer = require("webpack-dev-server");
 const webpack = require("webpack");
 
@@ -21,11 +15,12 @@ const webpack = require("webpack");
 const devTack = () => {
     global.WEBPACKCONFIG = "devConfig";
     const config = require("./webpack.config.js");
-    const projectConfig = require("./config/project/" + global.PROJECT + "/env/" + global.ENVJS).projectConfig;
+    const projectEnvConfig = require("./config/project/" + global.PROJECT + "/env/" + global.ENVJS);
+    const projectConfig = projectEnvConfig.projectConfig;
     const options = {
         contentBase: "./dist",
         hot: true,
-        host: project.host,
+        host: "localhost",
         stats: {
             colors: true,
             modules: false,
@@ -50,13 +45,12 @@ const devTack = () => {
     webpackDevServer.addDevServerEntrypoints(config, options);
     const compiler = webpack(config);
     const server = new webpackDevServer(compiler, options);
-
-    server.listen(project.devPort, options.host, () => {
-        console.warn(
-            "dev server listening at http://" +
+    server.listen(projectEnvConfig.devPort, options.host, () => {
+        console.error(
+            "Listening at http://" +
             options.host +
             ":" +
-            project.devPort
+            projectEnvConfig.devPort
         );
     });
 };
@@ -93,16 +87,30 @@ const readdir = (dirPath, method) => {
             if (stats[method]()) {
                 res.push({ name: filename, value: filename, fullname: fullname });
             }
-            reslove(res);
         }
+        reslove(res);
     });
 };
 
 // 目录选择
-const dirChoose = (dirPath, method, message) => {
+const dirChoose = (dirPath, method, message, isEnv) => {
     return new Promise((reslove) => {
         readdir(dirPath, method).then(res => {
             if (res.length > 0) {
+                if (isEnv) {
+                    let index = res.findIndex(v => /dev/.test(v.value));
+                    if (isDev) {
+                        if (index >= 0) {
+                            res = [res[index]];
+                        } else {
+                            throw new Error("无开发配置文件！");
+                        }
+                    } else {
+                        if (index >= 0) {
+                            res.splice(index, 1);
+                        }
+                    }
+                }
                 if (res.length > 1) {
                     inquirer
                         .prompt([
@@ -116,11 +124,13 @@ const dirChoose = (dirPath, method, message) => {
                         .then(answer => {
                             reslove(answer.value);
                         });
-                } else {
+                } else if (res.length == 1) {
                     reslove(res[0].value);
+                } else {
+                    throw new Error("无打包配置文件！");
                 }
             } else {
-                throw new Error("配置为空");
+                throw new Error("配置为空！");
             }
         });
     });
@@ -145,6 +155,12 @@ const choose = (message, choices) => {
     });
 };
 
+let isDev = false;
+const setDev = (cb) => {
+    isDev = true;
+    cb();
+};
+
 // 选择项目
 const chooseProject = (cb) => {
     dirChoose("./config/project", "isDirectory", "*****请选择项目：").then(res => {
@@ -156,7 +172,7 @@ const chooseProject = (cb) => {
 // 选择环境
 const chooseEnv = (cb) => {
     let dirPath = path.join("./config/project", global.PROJECT, "env");
-    dirChoose(dirPath, "isFile", "*****请选择配置文件：").then(res => {
+    dirChoose(dirPath, "isFile", "*****请选择配置文件：", true).then(res => {
         global.ENVJS = res;
         cb();
     });
@@ -173,13 +189,10 @@ const chooseHash = (cb) => {
 // 是否分割
 const chooseSplit = (cb) => {
     choose("*****是否动态加载路由？").then(res => {
-        global.ASYNCROUTE = res;
-        global.ROUTECONFIG = {};
         if (res) {
-            let routes = [];
-            let all = [];
+            let allRoutes = [];
             var dir = "./src/view";
-            var readdir = function(d) {
+            var readdir = function (d) {
                 var files = fs.readdirSync(d);
                 for (let filename of files) {
                     var fullname = path.join(d, filename);
@@ -188,7 +201,7 @@ const chooseSplit = (cb) => {
                         readdir(fullname);
                     } else {
                         if (/.vue$/.test(filename)) {
-                            all.push({
+                            allRoutes.push({
                                 file: filename,
                                 path: fullname
                                     .replace("src/view", "")
@@ -196,22 +209,12 @@ const chooseSplit = (cb) => {
                                     .replace(".vue", "")
                                     .toString()
                             });
-                            routes.push({
-                                name: filename.replace(".vue", "").toString(),
-                                path: fullname
-                                    .replace("src/view", "")
-                                    .replace("src\\view", "")
-                                    .replace(".vue", "")
-                                    .toString(),
-                                meta: "{ login: true }",
-                                component: `() => import ("${fullname.replace("src", "./..")}")`
-                            });
                         }
                     }
                 }
             };
             readdir(dir);
-            var pathProcess = function(p) {
+            var pathProcess = function (p) {
                 let path = "";
                 let paths = p.split("/");
                 let name = paths.pop();
@@ -221,7 +224,7 @@ const chooseSplit = (cb) => {
                     path: path
                 };
             };
-            var isChild = function(routes, parent, name, route, flag) {
+            var isChild = function (routes, parent, name, route, flag) {
                 let f;
                 for (let n in routes) {
                     if (n == parent) {
@@ -238,9 +241,9 @@ const chooseSplit = (cb) => {
                 return flag || f;
             };
 
-            var orderArray = require("lodash").orderBy(all, ["path"], ["asc"]);
+            var orderRoutes = require("lodash").orderBy(allRoutes, ["path"], ["asc"]);
             let routesObj = {};
-            for (let arr of orderArray) {
+            for (let arr of orderRoutes) {
                 let path = arr.path;
                 let curr = pathProcess(path);
                 let parent = pathProcess(curr.path).name;
@@ -255,10 +258,54 @@ const chooseSplit = (cb) => {
                     routesObj[curr.name] = route;
                 }
             }
-            global.ROUTECONFIG = routesObj;
-            // global.ASYNCROUTE = JSON.stringify(routesObj)
-            //     .replace(/"\$/g, "")
-            //     .replace(/\$"/g, "");
+            global.ROUTES = JSON.stringify(routesObj).replace(/"\$/g, "").replace(/\$"/g, "");
+        } else {
+            let codeRoutes = `{};
+            const components = require.context("./../view/", true, /\.vue$/);
+            let pathProcess = p => {
+                let path = "";
+                let paths = p.split("/");
+                let name = paths.pop();
+                path = paths.join("/");
+                return {
+                    name: name,
+                    path: path
+                };
+            };
+            let isChild = (routes, parent, name, route, flag) => {
+                let f;
+                for (let n in routes) {
+                    if (n == parent) {
+                        flag = true;
+                        if (routes[parent].children) {
+                            routes[parent].children[name] = route;
+                        } else {
+                            routes[parent].children = {
+                                [name]: route
+                            };
+                        }
+                    } else if (routes[n].children) {
+                        f = isChild(routes[n].children, parent, name, route, flag);
+                    }
+                }
+                return flag || f;
+            };
+            components.keys().forEach(key => {
+                let path = key.replace(".", "").replace(".vue", "");
+                let curr = pathProcess(path);
+                let parent = pathProcess(curr.path).name;
+                let route = {
+                    name: curr.name,
+                    path: path,
+                    meta: { login: false },
+                    component: components(key).default
+                };
+                let flag = isChild(routes, parent, curr.name, route, false);
+                if (!flag) {
+                    routes[curr.name] = route;
+                }
+            });`;
+            global.ROUTES = codeRoutes;
         }
         cb();
     });
@@ -285,7 +332,7 @@ const analyze = (cb) => {
 // 基础选择
 const chooseBase = gulp.series(chooseProject, chooseEnv, chooseSplit);
 
-gulp.task("dev", gulp.series(chooseBase, devTack));
+gulp.task("dev", gulp.series(setDev, chooseBase, devTack));
 gulp.task("build", gulp.series(chooseBase, chooseHash, chooseZip, buildTask));
 gulp.task("publish", gulp.series("build", sftp));
 gulp.task("sftp", gulp.series(chooseBase, sftp));

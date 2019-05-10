@@ -8,37 +8,17 @@
                 <button class="btn1" @click="close">返回</button>
             </div>
         </template>
-        <ui-root>
-            <ui-layer :show.sync="fromPB" :modal-close="false">
-                <div class="layer-content">
-                    <div class="pb-jump">
-                        <div class="pb-jump-title">跳转提示</div>
-                        <div class="pb-jump-content">尊敬的投资者：
-                            <br>期望财经为独立第三方平台，该平台信息仅供您参考，不构成最终投资操作建议。恒泰期货对其模型、策略或建议等不做任何承诺或担保，您应当自行辨别并承担据此产生的交易风险，恒泰期货不承担由此产生的任何投资损失及相关责任。期市有风险，入市须谨慎。
-                        </div>
-                        <div class="pb-jump-time">
-                            <div class="pb-jump-dtime">
-                                <canvas width="50px" height="50px" ref="canvas"></canvas>
-                                <div v-text="time"></div>
-                            </div>
-                            <span v-text="time"></span>秒后自动跳转到「期望财经」
-                        </div>
-                    </div>
-                </div>
-            </ui-layer>
-        </ui-root>
     </ui-layout>
 </template>
 <script>
 import UiRoot from "../components/UiRoot.vue";
-import UiLayer from "../components/UiLayer.vue";
 import store from "store";
 import { wxConfig, closeWindow } from "../utils/wx";
 import forward from "./../mixin/forward.js";
 import { STRING } from "../utils/constants";
 export default {
     mixins: [forward],
-    components: { UiRoot, UiLayer },
+    components: { UiRoot },
     data() {
         return {
             times: 0,
