@@ -2,21 +2,21 @@ module.exports = {
     default: {
         // 测试环境发布
         test: {
-            host: "119.18.237.73",
-            port: "3122",
-            user: "root",
-            pass: "red1357@$^*",
+            host: "",
+            port: "",
+            user: "",
+            pass: "",
             timeout: 100000,
-            remotePath: "/opt/static/ht/app"
+            remotePath: ""
         },
         // 生产环境发布
         production: {
-            host: "47.106.143.102",
-            port: "22",
-            user: "root",
-            pass: "Ht@2013global",
+            host: "",
+            port: "",
+            user: "",
+            pass: "",
             timeout: 100000,
-            remotePath: "/opt/static/app"
+            remotePath: ""
         }
     }
 };
