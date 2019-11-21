@@ -48,7 +48,12 @@ routesArray.push({
 let router = new Router({
     // history模式需要后台支持
     // mode: "history",
-    // scrollBehavior: () => ({ y: 0 }),
+    scrollBehavior: (to, from, savedPosition) => {
+        setTimeout(() => {
+            savedPosition = savedPosition || { x: 0, y: 0 };
+            window.scrollTo(savedPosition.x, savedPosition.y);
+        }, 500);
+    },
     routes: routesArray
 });
 

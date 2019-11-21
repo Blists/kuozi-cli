@@ -24,13 +24,13 @@ const contenthash = () => {
 var webpackConfig = {
     // webpack基础配置
     basicConfig: {
-        entry: { app: "./src/index.js" },
-        output: { path: path.resolve(__dirname, "dist") },
+        entry: { app: "./../src/index.js", config: "./../config/project/project.env.js" },
+        output: { path: path.resolve(__dirname, "../dist") },
         resolve: {
             extensions: [".js", ".vue"],
             alias: {
                 // vue: "vue/dist/vue.esm.js",
-                "@src": path.resolve(__dirname, "./src")
+                "@src": path.resolve(__dirname, "./../src")
             },
         },
         module: {
@@ -38,13 +38,19 @@ var webpackConfig = {
                 {
                     test: /\.js$/,
                     exclude: /(node_modules)/,
-                    loader: "babel-loader"
+                    use: {
+                        loader: "babel-loader",
+                        options: { configFile: "./.babelrc" }
+                    }
                 },
                 {
                     test: /routers\.js$/,
                     exclude: /(node_modules)/,
                     use: [
-                        "babel-loader",
+                        {
+                            loader: "babel-loader",
+                            options: { configFile: "./.babelrc" }
+                        },
                         {
                             loader: "string-replace-loader",
                             options: {
@@ -128,7 +134,7 @@ var webpackConfig = {
                             loader: "css-loader",
                             options: { sourceMap: true, importLoaders: 1 }
                         },
-                        { loader: "postcss-loader", options: { sourceMap: true } }
+                        { loader: "postcss-loader", options: { sourceMap: true, config: { path: "." } } }
                     ]
                 },
                 {
@@ -139,7 +145,7 @@ var webpackConfig = {
                             options: { sourceMap: true }
                         },
                         { loader: "css-loader", options: { sourceMap: true } },
-                        { loader: "postcss-loader", options: { sourceMap: true } },
+                        { loader: "postcss-loader", options: { sourceMap: true, config: { path: "." } } },
                         {
                             loader: "less-loader",
                             options: {
@@ -160,7 +166,7 @@ var webpackConfig = {
             ]
         },
 
-        plugins: [new HtmlWebpackPlugin({ template: "./index.html", hash: true })]
+        plugins: [new HtmlWebpackPlugin({ template: "./../index.html", hash: true })]
     },
     // webpack打包配置
     buildConfig: {
@@ -183,7 +189,7 @@ var webpackConfig = {
                             options: { publicPath: "../" }
                         },
                         "css-loader",
-                        "postcss-loader"
+                        { loader: "postcss-loader", options: { config: { path: "." } } }
                     ]
                 },
                 {
@@ -194,19 +200,7 @@ var webpackConfig = {
                             options: { publicPath: "../" }
                         },
                         "css-loader",
-                        "postcss-loader",
-                        "less-loader"
-                    ]
-                },
-                {
-                    test: /project\.variables\.less$/,
-                    use: [
-                        {
-                            loader: MiniCssExtractPlugin.loader,
-                            options: { publicPath: "../" }
-                        },
-                        "css-loader",
-                        "postcss-loader",
+                        { loader: "postcss-loader", options: { config: { path: "." } } },
                         {
                             loader: "less-loader",
                             options: {
@@ -228,9 +222,9 @@ var webpackConfig = {
         optimization: { minimizer: [] },
         plugins: [
             new CleanWebpackPlugin(),
-            new CopyPlugin([{ from: path.resolve(__dirname, "./static/**") }]),
+            new CopyPlugin([{ from: path.resolve(__dirname, "./../static/**") }]),
             new HtmlWebpackPlugin({
-                template: "./index.html",
+                template: "./../index.html",
                 inject: true,
                 minify: {
                     removeComments: true,

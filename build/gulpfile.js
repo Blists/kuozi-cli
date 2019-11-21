@@ -4,10 +4,13 @@ var path = require("path");
 var fs = require("fs");
 var inquirer = require("inquirer");
 
-var gulpSftp = require("gulp-sftp");
+var gulpSftp = require("gulp-sftp-up4");
 
 const webpackDevServer = require("webpack-dev-server");
 const webpack = require("webpack");
+
+const ssh = require("./../config/ssh");
+
 
 /**
  * dev-server
@@ -15,12 +18,12 @@ const webpack = require("webpack");
 const devTack = () => {
     global.WEBPACKCONFIG = "devConfig";
     const config = require("./webpack.config.js");
-    const projectEnvConfig = require("./config/project/" + global.PROJECT + "/env/" + global.ENVJS);
+    const projectEnvConfig = require("./../config/project/" + global.PROJECT + "/env/" + global.ENVJS);
     const projectConfig = projectEnvConfig.projectConfig;
     const options = {
         contentBase: "./dist",
         hot: true,
-        host: "localhost",
+        host: "0.0.0.0",
         stats: {
             colors: true,
             modules: false,
@@ -112,6 +115,12 @@ const dirChoose = (dirPath, method, message, isEnv) => {
                     }
                 }
                 if (res.length > 1) {
+                    let defaultIndex = res.findIndex(v => /(default|test)/.test(v.value));
+                    if (defaultIndex > 0) {
+                        let def = res[defaultIndex];
+                        res.splice(defaultIndex, 1);
+                        res.unshift(def);
+                    }
                     inquirer
                         .prompt([
                             {
@@ -163,7 +172,7 @@ const setDev = (cb) => {
 
 // 选择项目
 const chooseProject = (cb) => {
-    dirChoose("./config/project", "isDirectory", "*****请选择项目：").then(res => {
+    dirChoose("./../config/project", "isDirectory", "*****请选择项目：").then(res => {
         global.PROJECT = res;
         cb();
     });
@@ -171,7 +180,7 @@ const chooseProject = (cb) => {
 
 // 选择环境
 const chooseEnv = (cb) => {
-    let dirPath = path.join("./config/project", global.PROJECT, "env");
+    let dirPath = path.join("./../config/project", global.PROJECT, "env");
     dirChoose(dirPath, "isFile", "*****请选择配置文件：", true).then(res => {
         global.ENVJS = res;
         cb();
@@ -191,7 +200,7 @@ const chooseSplit = (cb) => {
     choose("*****是否动态加载路由？").then(res => {
         if (res) {
             let allRoutes = [];
-            var dir = "./src/view";
+            var dir = "./../src/view";
             var readdir = function (d) {
                 var files = fs.readdirSync(d);
                 for (let filename of files) {
@@ -204,8 +213,8 @@ const chooseSplit = (cb) => {
                             allRoutes.push({
                                 file: filename,
                                 path: fullname
-                                    .replace("src/view", "")
-                                    .replace("src\\view", "")
+                                    .replace("../src/view", "")
+                                    .replace("../src\\view", "")
                                     .replace(".vue", "")
                                     .toString()
                             });
@@ -320,7 +329,7 @@ const chooseZip = (cb) => {
 
 // 代码上传
 const sftp = () => {
-    return gulp.src("./dist/**").pipe(gulpSftp(ssh[global.PROJECT][global.ENVJS]));
+    return gulp.src("./../dist/**").pipe(gulpSftp(ssh[global.PROJECT][global.ENVJS.replace(".js", "")]));
 };
 
 // 模块分析

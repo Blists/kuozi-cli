@@ -6,7 +6,7 @@ import store from "store";
 
 axios.defaults.headers["x-requested-with"] = "XMLHttpRequest";
 
-let fetch = function(method, baseURL, url, data, options, noLoading, noToast, vue) {
+let fetch = function (method, baseURL, url, data, options, noLoading, noToast, vue) {
     return new Promise((resolve, reject) => {
         let token = store.get("$token");
         let o = options || { headers: {} };
@@ -49,18 +49,18 @@ let fetch = function(method, baseURL, url, data, options, noLoading, noToast, vu
                 if (!noToast) {
                     if (error.response && error.response.status) {
                         switch (error.response.status) {
-                        case 404:
-                            vue && vue.$toast(`错误代码404`);
-                            break;
-                        case 502:
-                            vue && vue.$toast(`服务器正在升级,请稍后再试`);
-                            break;
-                        case 504:
-                            vue && vue.$toast(`网络已断开`);
-                            break;
-                        default:
-                            vue && vue.$toast(`请求服务异常,请稍后再试（${error.response.status}）`);
-                            break;
+                            case 404:
+                                vue && vue.$toast(`错误代码404`);
+                                break;
+                            case 502:
+                                vue && vue.$toast(`服务器正在升级,请稍后再试`);
+                                break;
+                            case 504:
+                                vue && vue.$toast(`网络已断开`);
+                                break;
+                            default:
+                                vue && vue.$toast(`请求服务异常,请稍后再试（${error.response.status}）`);
+                                break;
                         }
                     }
                 }
@@ -72,7 +72,7 @@ let fetch = function(method, baseURL, url, data, options, noLoading, noToast, vu
     });
 };
 
-let $get = function(restKey, join, options, noLoading, noToast, vue) {
+let $get = function (restKey, join, options, noLoading, noToast, vue) {
     if (typeof restKey === "string") {
         restKey = ["default", restKey];
     }
@@ -82,7 +82,7 @@ let $get = function(restKey, join, options, noLoading, noToast, vue) {
     return fetch("get", projectConfig.baseURL + (projectConfig.rootPath ? "/" + projectConfig.rootPath : ""), url, null, options, noLoading, noToast, vue);
 };
 
-let $post = function(restKey, params, join, options, noLoading, noToast, vue) {
+let $post = function (restKey, params, join, options, noLoading, noToast, vue) {
     if (typeof restKey === "string") {
         restKey = ["default", restKey];
     }
