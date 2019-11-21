@@ -2,6 +2,8 @@ const path = require("path");
 const webpack = require("webpack");
 const merge = require("webpack-merge");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
+// 预加载
+const PreloadWebpackPlugin = require("preload-webpack-plugin");
 // css分离
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 // js压缩
@@ -231,7 +233,11 @@ var webpackConfig = {
                     collapseWhitespace: true,
                     removeAttributeQuotes: true
                 },
-                chunksSortMode: "dependency"
+                // chunksSortMode: "dependency"
+            }),
+            new PreloadWebpackPlugin({
+                rel: "preload",
+                include: "allChunks" // or 'initial'
             }),
             new webpack.HashedModuleIdsPlugin(),
             // css单独出个文件
