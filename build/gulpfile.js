@@ -50,9 +50,7 @@ const devTack = () => {
     const server = new webpackDevServer(compiler, options);
     server.listen(projectEnvConfig.devPort, options.host, () => {
         console.error(
-            "Listening at http://" +
-            options.host +
-            ":" +
+            "Listening at http://localhost:" +
             projectEnvConfig.devPort
         );
     });
@@ -214,7 +212,7 @@ const chooseSplit = (cb) => {
                                 file: filename,
                                 path: fullname
                                     .replace("../src/view", "")
-                                    .replace("../src\\view", "")
+                                    .replace("..\\src\\view", "")
                                     .replace(".vue", "")
                                     .toString()
                             });
@@ -224,13 +222,9 @@ const chooseSplit = (cb) => {
             };
             readdir(dir);
             var pathProcess = function (p) {
-                let path = "";
-                let paths = p.split("/");
-                let name = paths.pop();
-                path = paths.join("/");
                 return {
-                    name: name,
-                    path: path
+                    name: p.split(/\//.test(p) ? "/" : "\\").pop(),
+                    path: p
                 };
             };
             var isChild = function (routes, parent, name, route, flag) {
@@ -271,14 +265,10 @@ const chooseSplit = (cb) => {
         } else {
             let codeRoutes = `{};
             const components = require.context("./../view/", true, /\.vue$/);
-            let pathProcess = p => {
-                let path = "";
-                let paths = p.split("/");
-                let name = paths.pop();
-                path = paths.join("/");
+            var pathProcess = function (p) {
                 return {
-                    name: name,
-                    path: path
+                    name: p.split("/").pop(),
+                    path: p
                 };
             };
             let isChild = (routes, parent, name, route, flag) => {

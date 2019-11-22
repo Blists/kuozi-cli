@@ -168,7 +168,10 @@ var webpackConfig = {
             ]
         },
 
-        plugins: [new HtmlWebpackPlugin({ template: "./../index.html", hash: true })]
+        plugins: [
+            new HtmlWebpackPlugin({ template: "./../index.html", hash: true }),
+            new CopyPlugin([{ from: path.resolve(__dirname, "./../static/**"), to: "./static" }])
+        ]
     },
     // webpack打包配置
     buildConfig: {
@@ -244,7 +247,7 @@ var webpackConfig = {
             new MiniCssExtractPlugin({
                 filename: "./style" + contenthash() + ".css",
                 chunkFilename: "./chunks/[name]" + contenthash() + ".css"
-            })
+            }),
         ]
     }
 };
