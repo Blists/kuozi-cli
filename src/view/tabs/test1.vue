@@ -1,6 +1,6 @@
 <template>
     <ui-layout>
-        页面传参：{{p1}}
+        页面传参：{{$tab.params}}
     </ui-layout>
 </template>
 

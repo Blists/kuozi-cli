@@ -8,8 +8,6 @@ import index from "./../view/index.vue";
 import Login from "./../view/login.vue";
 import home from "./../view/home";
 
-import { login } from "./routerConfig";
-
 Vue.use(Router);
 
 let router = new Router({
@@ -33,7 +31,7 @@ let router = new Router({
             name: "home",
             path: "/home",
             component: home,
-            meta: { login }
+            meta: { login: true }
         }
     ]
 });

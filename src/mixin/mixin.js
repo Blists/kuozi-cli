@@ -64,6 +64,7 @@ Vue.mixin({
             this.$router.push(p);
         },
         $open(e) {
+            e.params = e.params || {};
             this.$taber.open(e);
         },
         $$loading() {

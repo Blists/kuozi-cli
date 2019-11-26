@@ -3,10 +3,8 @@
 import "babel-polyfill";
 import Vue from "vue";
 // js工具库 _
-import _ from "lodash";
-
 import ElementUI from "element-ui";
-import "element-ui/lib/theme-chalk/index.css";
+import "./../element-theme/index.css";
 
 import "./style/style.less";
 import router from "./router/router";
@@ -16,14 +14,15 @@ import "./mixin/mixin";
 import "./filter/filter";
 import App from "./App";
 
-import Taber from "./plugs/taber";
-import tabs from "./router/tabs.js";
+
+import VueTaber from "yy-taber";
+import tabs from "./router/tab.js";
 
 Vue.use(ElementUI, { size: "small" });
 
-Vue.use(Taber);
+Vue.use(VueTaber);
 
-const vueTaber = new Taber({
+const vueTaber = new VueTaber({
     tabs,
     persist: true
 });
