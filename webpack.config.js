@@ -209,7 +209,7 @@ var buildConfig = {
             },
             {
                 // 配合ExtractTextPlugin使用
-                test: /\.less$/,
+                test: /\.scss$/,
                 loader: ExtractTextPlugin.extract({
                     fallback: "style-loader",
                     use: ["css-loader?minimize", "postcss-loader", "sass-loader"]
