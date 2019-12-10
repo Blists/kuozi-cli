@@ -26,7 +26,7 @@ const contenthash = () => {
 var webpackConfig = {
     // webpack基础配置
     basicConfig: {
-        entry: { app: "./../src/index.js", config: "./../config/project/project.env.js" },
+        entry: { app: "./../src/index.js" },
         output: { path: path.resolve(__dirname, "../dist") },
         resolve: {
             extensions: [".js", ".vue"],
@@ -89,6 +89,12 @@ var webpackConfig = {
                         name: "vendors",
                         chunks: "all",
                         test: /[\\/]node_modules[\\/]/,
+                    },
+                    config: {
+                        name: "config",
+                        test: /config\/project/,
+                        chunks: "all",
+                        enforce: true
                     },
                     styles: {
                         name: "styles",
