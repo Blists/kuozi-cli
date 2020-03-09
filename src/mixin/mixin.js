@@ -8,12 +8,15 @@ import { fetch, $get, $post, $put, $delete } from "../utils/fetch";
 
 import UiLayout from "./../components/UiLayout.vue";
 
+import { CONST } from "../utils/constants";
+
+
 // 全局混合
 Vue.mixin({
     components: { UiLayout },
     data() {
         return {
-            PageSize: 15,
+            PageSize: CONST.PAGESIZE,
             Store: store
         };
     },
@@ -66,6 +69,10 @@ Vue.mixin({
         $open(e) {
             e.params = e.params || {};
             this.$taber.open(e);
+        },
+        $refreshOrOpen(e, isSelect) {
+            e.params = e.params || {};
+            this.$taber.refreshOrOpen(e, isSelect);
         },
         $$loading() {
             this.$store.commit("loading");

@@ -34,6 +34,7 @@ var webpackConfig = {
                 // vue: "vue/dist/vue.esm.js",
                 "@src": path.resolve(__dirname, "./../src")
             },
+            symlinks: false
         },
         module: {
             rules: [

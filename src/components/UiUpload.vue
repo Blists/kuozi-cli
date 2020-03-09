@@ -1,65 +1,123 @@
 <template>
     <div class="ui-upload">
         <div v-for="(v,i) of values" :key="v" class="ui-upload-img">
-            <img :src="imgUrl+v">
-            <div class="ui-upload-del" @click="del(i)"></div>
+            <img :src="preImg+v" />
+            <div class="ui-upload-del">
+                <i class="el-icon-zoom-in" @click="preView(v)" />
+                <i class="el-icon-delete" @click="del(i)" />
+            </div>
         </div>
-        <div class="ui-upload-input" v-if="multiple||values.length==0">
-            <div class="ui-upload-icon"></div>
-            <input v-if="show" type="file" accept="image/*" @change="change">
+        <div v-if="(multiple&&values.length<=limit)||values.length==0" v-loading="loading" class="ui-upload-input">
+            <div class="ui-upload-icon">
+                <i class="el-icon-plus" />
+            </div>
+            <input v-if="show" ref="input" type="file" accept="image/*" title @change="change" @dragleave.stop=";" @drop.stop="drop"/>
         </div>
+        <el-dialog :visible.sync="preViewVisible" width="60%">
+            <img v-if="preViewSrc" class="pre-img" :src="preImg+preViewSrc" />
+        </el-dialog>
     </div>
 </template>
 
 <script>
-import conf from "../../config/project/project.env";
 export default {
     props: {
-        value: { default: "" },
+        // 是否多个上传
         multiple: { type: Boolean, default: false },
-        /**
-         * urls里配置的文件上传的接口的key
-         */
+        // 个数限制
+        limit: { type: Number, default: Infinity },
+        // 大小限制
+        maxSize: { type: Number, default: 10 },
+        // urls里配置的文件上传的接口的key
         uploadKey: { type: [String, Array], default: "" },
-        /**
-         * project.env里配置的图片查看前缀的key
-         */
-        previewKey: { type: [String, Array], default: "" }
+        // 图片预览前缀
+        preImg: { type: String, default: "" },
+        // 上传接口 后台name参数
+        uploadFileKey: { type: String, default: "file" }
     },
     data() {
-        return { imgUrl: conf[this.previewKey], show: true };
+        return {
+            loading: false,
+            values: "",
+            preViewVisible: false,
+            preViewSrc: "",
+            show: true
+        };
+    },
+    created() {
+        this.init();
     },
     methods: {
-        async change($event) {
-            let file = $event.target.files[0];
-            if (file && file.size > 0) {
-                let formData = new FormData();
-                formData.append("files", file);
-                let res = await this.$post(this.uploadKey, formData);
-                let values = this.values;
-                values.push(res);
-                this.$emit("input", values.join(","));
-                this.show = false;
-                this.$nextTick(()=>{
-                    this.show = true;
-                });
+        init(values) {
+            if (values) {
+                this.values = this.multiple ? values : [values];
+            } else {
+                this.values = [];
             }
         },
+        async change($event) {
+            let file = $event.target.files[0];
+            if (file.size > this.maxSize * 1024 * 1024) {
+                this.$emit("out-max-size", file, this.maxSize);
+            } else {
+                if (file && file.size > 0) {
+                    if (this.uploadKey) {
+                        let formData = new FormData();
+                        formData.append(this.uploadFileKey, file);
+                        this.loading = true;
+                        try {
+                            let res = await this.$post(this.uploadKey, formData);
+                            this.values.push(res);
+                            this.emit();
+                        } finally {
+                            this.loading = false;
+                        }
+                    } else {
+                        alert("未配置uploadKey");
+                    }
+                }
+            }
+            this.reloadInput();
+        },
         del(i) {
-            let values = this.values.splice(i, 1);
-            this.$emit("input", values.join(","));
+            this.$confirm("是否确认删除？", "提示", {
+                confirmButtonText: "确定",
+                cancelButtonText: "取消",
+                type: "warning"
+            })
+                .then(() => {
+                    this.values.splice(i, 1);
+                    this.emit();
+                })
+                .catch(() => {});
+        },
+        preView(v) {
+            this.preViewSrc = v;
+            this.preViewVisible = true;
+        },
+        emit() {
+            let value;
+            if (this.multiple) {
+                value = this.values;
+            } else {
+                if (this.values.length > 0) {
+                    value = this.values[0];
+                } else {
+                    value = "";
+                }
+            }
+            this.$emit("input", value);
         },
         mouseover($event) {
             $event.target.focus();
-        }
-    },
-    computed: {
-        values() {
-            if (this.value) {
-                return this.value.split(",");
-            }
-            return [];
-        }
+        },
+        reloadInput() {
+            this.show = false;
+            this.$nextTick(() => {
+                this.show = true;
+            });
+        },
+        drop() {}
     }
 };
 </script>
@@ -95,10 +153,9 @@ export default {
             transition: all 0.5s;
             background: rgba(0, 0, 0, 0.5);
             opacity: 0;
-            &::before {
-                content: "\E612";
-                font-family: element-icons !important;
-                font-size: 24px;
+            i {
+                font-size: 20px;
+                margin: 0 5px;
                 color: white;
             }
         }
@@ -122,12 +179,6 @@ export default {
             vertical-align: top;
             text-align: center;
             cursor: pointer;
-            &::after {
-                content: "\E62B";
-                font-family: element-icons !important;
-                font-size: 24px;
-                color: #8c939d;
-            }
         }
         > input {
             position: absolute;
@@ -138,6 +189,17 @@ export default {
             z-index: 1;
             cursor: pointer;
         }
+        &:hover {
+            i {
+                font-size: 20px;
+            }
+        }
+    }
+    i {
+        font-size: 18px;
+    }
+    .pre-img {
+        max-width: 100%;
     }
 }
 </style>

@@ -2,12 +2,12 @@
     <div>
         <div class="login">
             <div class="login-form">
-                <el-form :model="form" status-icon :rules="rules" ref="form" label-width="100px" class="demo-ruleForm">
+                <el-form ref="form" :model="form" status-icon :rules="rules" label-width="100px" class="demo-ruleForm">
                     <el-form-item label="用户名" prop="username">
-                        <el-input type="text" v-model="form.username" auto-complete="off"></el-input>
+                        <el-input v-model="form.username" type="text" auto-complete="off"/>
                     </el-form-item>
                     <el-form-item label="密码" prop="pwd">
-                        <el-input type="password" v-model="form.pwd" auto-complete="off"></el-input>
+                        <el-input v-model="form.pwd" type="password" auto-complete="off"/>
                     </el-form-item>
                     <el-form-item>
                         <el-button type="primary" @click="login('form')">登录</el-button>
@@ -33,12 +33,18 @@ export default {
             }
         };
     },
+    created() {
+        if (process.env.ENVJS === "env.dev.js") {
+            this.form.username = "admin";
+            this.form.pwd = "admin";
+        }
+    },
     methods: {
         login(formName) {
             this.$refs[formName].validate(valid => {
                 if (valid) {
                     window.login = true;
-                    this.forward({}, "$token");
+                    this.forward({}, "token");
                 } else {
                     return false;
                 }

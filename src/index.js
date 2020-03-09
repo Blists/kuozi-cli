@@ -15,7 +15,7 @@ import "./filter/filter";
 import App from "./App";
 
 
-import VueTaber from "yy-taber";
+import VueTaber from "@yy/yy-taber";
 import tabs from "./router/tab.js";
 
 Vue.use(ElementUI, { size: "small" });

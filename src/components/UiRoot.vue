@@ -1,6 +1,6 @@
 <template>
     <div class="ui-root">
-        <slot></slot>
+        <slot/>
     </div>
 </template>
 

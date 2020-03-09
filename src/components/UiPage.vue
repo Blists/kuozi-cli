@@ -1,10 +1,11 @@
 <template>
     <div class="ui-page">
-        <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :layout="layout" :page-size="pageSize" :total="total" background></el-pagination>
+        <el-pagination :layout="layout" :page-size="pageSize" :total="total" background @size-change="handleSizeChange" @current-change="handleCurrentChange"/>
     </div>
 </template>
 
 <script>
+import { CONST } from "../utils/constants";
 export default {
     props: {
         layout: {
@@ -13,7 +14,7 @@ export default {
         },
         pageSize: {
             type: Number,
-            default: 20
+            default: CONST.PAGESIZE,
         },
         total: {
             type: Number,

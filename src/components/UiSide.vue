@@ -1,14 +1,22 @@
 <template>
     <div class="ui-side" :class="{collapse:collapse}">
-        <el-menu default-active="0" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose" :collapse="collapse">
-            <el-menu-item index="0" @click.native="$to({name:'home'})">
-                <i class="fa fa-home fa-fw fa-lg"></i>
-                <span slot="title">首页</span>
+        <el-menu :default-active="activeMenu" class="el-menu-vertical-demo" :collapse="collapse">
+            <el-menu-item index="test1" @click.native="open({name:'test1',title:'测试一页面',params:{p1:'参数一'}})">
+                <i class="el-icon-coin" />
+                <span slot="title">测试一</span>
+            </el-menu-item>
+            <el-menu-item index="test1" @click.native="open({name:'test1',key:'key',title:'测试一页面'})">
+                <i class="el-icon-coin" />
+                <span slot="title">测试一</span>
+            </el-menu-item>
+            <el-menu-item index="test2" @click.native="open({name:'test2',title:'测试二页面'})">
+                <i class="el-icon-suitcase" />
+                <span slot="title">测试二</span>
             </el-menu-item>
         </el-menu>
         <div class="dock" @click="collapse = !collapse">
-            <i v-if="collapse" class="el-icon-arrow-right"></i>
-            <i v-else class="el-icon-arrow-left"></i>
+            <i v-if="collapse" class="el-icon-arrow-right" />
+            <i v-else class="el-icon-arrow-left" />
         </div>
     </div>
 </template>
@@ -16,13 +24,16 @@
 <script>
 export default {
     data() {
-        return {
-            collapse: false
-        };
+        return { collapse: false, activeMenu: "" };
     },
     methods: {
-        handleOpen(key, keyPath) {},
-        handleClose(key, keyPath) {}
+        setActiveMenu(menuName) {
+            this.activeMenu = menuName;
+        },
+        open(e) {
+            this.setActiveMenu(e.name);
+            this.$refreshOrOpen(e, true);
+        }
     }
 };
 </script>
@@ -50,6 +61,7 @@ export default {
         border-style: solid solid solid none;
         border-radius: 0 5px 5px 0;
         line-height: 50px;
+        z-index: 9;
     }
 }
 </style>
