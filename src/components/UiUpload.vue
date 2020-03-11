@@ -3,15 +3,22 @@
         <div v-for="(v,i) of values" :key="v" class="ui-upload-img">
             <img :src="preImg+v" />
             <div class="ui-upload-del">
-                <i class="el-icon-zoom-in" @click="preView(v)" />
-                <i class="el-icon-delete" @click="del(i)" />
+                <div v-if="multiple&&values.length>1" class="ui-upload-warp">
+                    <i v-if="i!=0" class="el-icon-back" title="前移" @click="move(i,i-1)" />
+                    <i v-if="i!=values.length-1" class="el-icon-right" title="后移" @click="move(i,i+1)" />
+                </div>
+                <div class="ui-upload-warp">
+                    <i class="el-icon-zoom-in" title="预览" @click="preView(v)" />
+                    <i class="el-icon-delete" title="删除" @click="del(i)" />
+                </div>
             </div>
         </div>
-        <div v-if="(multiple&&values.length<=limit)||values.length==0" v-loading="loading" class="ui-upload-input">
+        <div v-if="(multiple&&values.length<=limit)||values.length==0" v-loading="loading" class="ui-upload-input" :class="{active:dragHover}">
             <div class="ui-upload-icon">
-                <i class="el-icon-plus" />
+                <span v-if="dragHover" class="ui-upload-drag-text">松开上传</span>
+                <i v-else class="el-icon-plus" />
             </div>
-            <input v-if="show" ref="input" type="file" accept="image/*" title @change="change" @dragleave.stop=";" @drop.stop="drop"/>
+            <input v-if="show" ref="input" type="file" accept="image/*" title @change="change" @dragleave.stop="dragHover=false" @drop.stop="drop" @dragover.stop="dragHover=true" />
         </div>
         <el-dialog :visible.sync="preViewVisible" width="60%">
             <img v-if="preViewSrc" class="pre-img" :src="preImg+preViewSrc" />
@@ -41,7 +48,8 @@ export default {
             values: "",
             preViewVisible: false,
             preViewSrc: "",
-            show: true
+            show: true,
+            dragHover: false
         };
     },
     created() {
@@ -78,6 +86,13 @@ export default {
                 }
             }
             this.reloadInput();
+        },
+        move(index1, index2) {
+            let value = this.values[index1];
+            this.values[index1] = this.values[index2];
+            this.values[index2] = value;
+            this.$forceUpdate();
+            this.emit();
         },
         del(i) {
             this.$confirm("是否确认删除？", "提示", {
@@ -136,6 +151,7 @@ export default {
         border: 1px solid #ccc;
         border-radius: 4px;
         margin-right: 10px;
+        margin-bottom: 5px;
         overflow: hidden;
         > img {
             display: block;
@@ -143,16 +159,21 @@ export default {
             max-height: 80%;
         }
         .ui-upload-del {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
             position: absolute;
             width: 100px;
             height: 100px;
-            line-height: 100px;
             vertical-align: top;
             text-align: center;
             cursor: pointer;
             transition: all 0.5s;
             background: rgba(0, 0, 0, 0.5);
             opacity: 0;
+            .ui-upload-warp {
+                width: 100%;
+            }
             i {
                 font-size: 20px;
                 margin: 0 5px;
@@ -179,6 +200,10 @@ export default {
             vertical-align: top;
             text-align: center;
             cursor: pointer;
+            .ui-upload-drag-text {
+                font-size: 12px;
+                color: #539bef;
+            }
         }
         > input {
             position: absolute;
@@ -189,9 +214,13 @@ export default {
             z-index: 1;
             cursor: pointer;
         }
-        &:hover {
+        &:hover,
+        &.active {
+            .ui-upload-icon {
+                border-color: #539bef;
+            }
             i {
-                font-size: 20px;
+                color: #539bef;
             }
         }
     }
@@ -199,7 +228,9 @@ export default {
         font-size: 18px;
     }
     .pre-img {
+        display: block;
         max-width: 100%;
+        margin: 0 auto;
     }
 }
 </style>
