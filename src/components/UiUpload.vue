@@ -18,7 +18,7 @@
                 <span v-if="dragHover" class="ui-upload-drag-text">松开上传</span>
                 <i v-else class="el-icon-plus" />
             </div>
-            <input v-if="show" ref="input" type="file" accept="image/*" title @change="change" @dragleave.stop="dragHover=false" @drop.stop="drop" @dragover.stop="dragHover=true" />
+            <input v-if="show" ref="input" type="file" accept="image/*" title @change="change" @dragleave.stop="dragHover=false" @drop.stop="dragHover=false" @dragover.stop="dragHover=true" />
         </div>
         <el-dialog :visible.sync="preViewVisible" width="60%">
             <img v-if="preViewSrc" class="pre-img" :src="preImg+preViewSrc" />
