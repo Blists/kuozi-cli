@@ -9,4 +9,12 @@ const nologin = {
     index: true,
     login: true
 };
-export { dynamic, login, needlogin, nologin };
+// to不需要切换动画的页面
+const toNoTransitionPage = {
+    productList: true,
+    clientList: true,
+    orderList: true,
+    bookList: true
+
+};
+export { dynamic, login, needlogin, nologin, toNoTransitionPage };

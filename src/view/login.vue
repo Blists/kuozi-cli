@@ -1,6 +1,6 @@
 <template>
     <ui-layout>
-        <ui-head slot="top" title="登录" no-back/>
+        <ui-head slot="top" title="登录" no-back />
         <button @click="login">登录</button>
     </ui-layout>
 </template>
@@ -11,7 +11,11 @@ export default {
     mixins: [forward],
     methods: {
         login() {
-            this.forward({}, "token");
+            this.$loading();
+            setTimeout(() => {
+                sessionStorage.setItem("$forwardReplace", true);
+                this.forward({}, "token");
+            }, 300);
         }
     }
 };

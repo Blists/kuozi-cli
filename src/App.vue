@@ -9,6 +9,7 @@
 </template>
 <script>
 import { STRING } from "./utils/constants";
+import { toNoTransitionPage } from "./router/routerConfig";
 export default {
     data() {
         return { transitionName: "forward" };
@@ -27,7 +28,7 @@ export default {
     },
     watch: {
         $route(to, from) {
-            this.transitionName = (from.name && from.name != "index" && to.params && to.params[STRING.VNK + "-dir"]) || "";
+            this.transitionName = (from.name && from.name != "index" && (!toNoTransitionPage[to.name] || to.params[STRING.VNK + "-dir"] === "back") && to.params && to.params[STRING.VNK + "-dir"]) || "";
         }
     }
 };
@@ -43,8 +44,13 @@ export default {
 }
 .app-router-view {
     position: absolute;
-    transition: opacity @time, transform @time;
     width: 100%;
+}
+.forward-enter-active,
+.forward-leave-active,
+.back-enter-active,
+.back-leave-active {
+    transition: opacity @time, transform @time;
 }
 .forward-enter,
 .back-leave-active {

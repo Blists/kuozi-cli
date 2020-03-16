@@ -13,9 +13,9 @@ export default {
                 }
                 let obj = { name: STRING.HOME };
                 let path = sessionStorage.getItem("$path");
-                sessionStorage.clear("$path");
+                sessionStorage.removeItem("$path");
                 let forwardReplace = sessionStorage.getItem("$forwardReplace");
-                sessionStorage.clear("$path");
+                sessionStorage.removeItem("$forwardReplace");
                 if (path && path != "/" && !/^\/index/.test(path) && !/^\/login/.test(path)) {
                     obj = { path };
                 }
