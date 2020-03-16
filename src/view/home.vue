@@ -2,14 +2,12 @@
     <ui-layout>
         <ui-head slot="top" title="首页" no-back />
         <div class="right">
-            <div @click="$to({name:'layoutScrollWindow'})">window滚动布局</div>
-            <div @click="$to({name:'layoutScrollSelf'})">局部滚动布局</div>
+            <div @click="$to({name:'layoutNoBs'})">不使用BetterScroll</div>
             <div @click="$to({name:'layoutFlex'})">内容flex布局</div>
             <div v-for="i in 10" :key="i" class="list" @click="$to({name:'test'})">进去详细页面返回不刷新页面{{i}}</div>
         </div>
         <div slot="bottom">
-            <button @click="clear">清除rs</button>
-             <input v-model="msg" class="input" type="text" placeholder="测试返回不刷新" />
+            <input v-model="msg" class="input" type="text" placeholder="测试返回不刷新" />
         </div>
     </ui-layout>
 </template>
@@ -21,15 +19,6 @@ export default {
             msg: "",
             rs: {}
         };
-    },
-    created() {
-        // this.rs = this.$navigation.getRoutes();
-    },
-    methods: {
-        clear() {
-            this.$navigation.cleanRoutes();
-            this.rs = this.$navigation.getRoutes();
-        }
     }
 };
 </script>
@@ -42,7 +31,7 @@ export default {
 .right {
     text-align: right;
 }
-.input{
+.input {
     width: 100%;
     height: 50px;
     padding: 0 10px;

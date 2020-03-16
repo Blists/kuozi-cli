@@ -3,11 +3,9 @@
         <div class="ui-layout-top">
             <slot name="top" />
         </div>
-        <div ref="scroll" class="ui-layout-container">
-            <div class="scroll-container" :class="{'no-scroll':noScroll,'flex-container':flex}">
-                <slot />
-            </div>
-        </div>
+        <UiContainer class="ui-layout-container" :no-bs="noBs" :flex="flex">
+            <slot />
+        </UiContainer>
         <div class="ui-layout-bottom">
             <slot name="bottom" />
         </div>
@@ -15,14 +13,15 @@
 </template>
 
 <script>
-import BScroll from "better-scroll";
+import UiContainer from "./UiContainer";
 export default {
+    components: { UiContainer },
     props: {
         full: {
             type: Boolean,
             default: false
         },
-        noScroll: {
+        noBs: {
             type: Boolean,
             default: false
         },
@@ -33,18 +32,6 @@ export default {
     },
     data() {
         return {};
-    },
-    created() {
-        if (this.noScroll || this.flex) {
-            //
-        } else {
-            this.$nextTick(() => {
-                this.$refs.scroll && new BScroll(this.$refs.scroll, {
-                    click: true,
-                    mouseWheel: true
-                });
-            });
-        }
     }
 };
 </script>
@@ -58,17 +45,6 @@ export default {
     .ui-layout-container {
         flex: 1;
         overflow: hidden;
-        .scroll-container {
-            &.no-scroll {
-                height: 100%;
-            }
-            &.flex-container {
-                display: flex;
-                flex-direction: column;
-                height: 100%;
-                overflow: hidden;
-            }
-        }
     }
     &.full {
         position: fixed;

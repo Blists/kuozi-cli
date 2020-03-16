@@ -8,6 +8,7 @@
     </div>
 </template>
 <script>
+import { STRING } from "./utils/constants";
 export default {
     data() {
         return { transitionName: "forward" };
@@ -26,18 +27,7 @@ export default {
     },
     watch: {
         $route(to, from) {
-            this.transitionName = (from.name && to.params && to.params["vnk-dir"]) || "";
-        }
-    },
-    computed: {
-        transition() {
-            return this.$store.state.transition;
-        },
-        spinner() {
-            return this.$store.state.spinner;
-        },
-        loading() {
-            return this.$store.state.loading;
+            this.transitionName = (from.name && from.name != "index" && to.params && to.params[STRING.VNK + "-dir"]) || "";
         }
     }
 };

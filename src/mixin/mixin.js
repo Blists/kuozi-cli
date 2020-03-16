@@ -22,12 +22,6 @@ Vue.mixin({
             Store: store
         };
     },
-    created() {
-        this.$loaded();
-    },
-    activated() {
-        this.$loaded();
-    },
     methods: {
         /**
          *get请求
@@ -74,10 +68,10 @@ Vue.mixin({
             }
         },
         $loading() {
-            Loading.loading();
+            Loading.$loading();
         },
         $loaded() {
-            Loading.loaded();
+            Loading.$loaded();
         },
         $getParam(key, url) {
             return getParam(key, url);

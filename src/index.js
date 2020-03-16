@@ -5,7 +5,7 @@ import "babel-polyfill";
 import Vue from "vue";
 
 import VuePageStack from "vue-page-stack";
-// import Navigation from "vue-navigation";
+import { STRING } from "./utils/constants";
 
 import "./style/style.less";
 import router from "./router/router";
@@ -19,12 +19,12 @@ import Toast from "@yy/yy-toast";
 import "@yy/yy-toast/dist/yyToast.css";
 
 Vue.use(Toast);
-// import FastClick from "fastclick";
+// import FastClick from "@yy/yy-fastclick";
 
 // // 去掉ios上300毫秒延迟
 // FastClick.attach(document.body);
 
-Vue.use(VuePageStack, { router, keyName: "vnk" });
+Vue.use(VuePageStack, { router, keyName: STRING.VNK });
 
 Vue.config.devtools = true;
 let vm = new Vue({

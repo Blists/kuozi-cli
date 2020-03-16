@@ -3,6 +3,7 @@ import { INFO } from "../../config/project/project.env";
 const STRING = {
     INFO: INFO,
     TOKEN: "$token-mobile",
-    HOME: "home"
+    HOME: "home",
+    VNK: "vnk",
 };
 export { STRING };

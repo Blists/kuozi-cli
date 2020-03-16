@@ -3,6 +3,7 @@
  */
 import Vue from "vue";
 import Router from "vue-router";
+import Loading from "@yy/yy-loading";
 
 // 是否登录控制
 import { dynamic, login, needlogin, nologin } from "./routerConfig";
@@ -60,6 +61,7 @@ let router = new Router({
 
 // 路由跳转钱操作
 router.beforeEach((to, form, next) => {
+    Loading.$loaded();
     // 登录过滤
     if (window.intercept && to.meta.login && !window.login) {
         sessionStorage.setItem("$path", to.fullPath);

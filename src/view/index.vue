@@ -15,6 +15,7 @@ export default {
         };
     },
     created() {
+        this.$loading();
         sessionStorage.setItem("$forwardReplace", true);
         // 开始登录校验
         window.intercept = true;
