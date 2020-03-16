@@ -3,16 +3,16 @@
  */
 import Vue from "vue";
 import store from "store";
+import { getParam } from "@yy/yy-tools";
+import Loading from "@yy/yy-loading";
 
 import { fetch, $get, $post, $put, $delete } from "../utils/fetch";
 
 import UiLayout from "../components/UiLayout.vue";
-import UiContainer from "../components/UiContainer.vue";
 import UiHead from "../components/UiHead.vue";
 
 Vue.component("ui-layout", UiLayout);
 Vue.component("ui-head", UiHead);
-Vue.component("ui-container", UiContainer);
 
 // 全局混合
 Vue.mixin({
@@ -21,6 +21,12 @@ Vue.mixin({
             PageSize: 15,
             Store: store
         };
+    },
+    created() {
+        this.$loaded();
+    },
+    activated() {
+        this.$loaded();
     },
     methods: {
         /**
@@ -57,49 +63,24 @@ Vue.mixin({
         $delDirect(url, params, options, noLoading, noToast) {
             return fetch("delete$delete", "", url, params, options, noLoading, noToast, this);
         },
-        /**
-         * [$back description]返回事件
-         * @return {[type]} [description]
-         */
         $back() {
-            this.$store.commit("transition", "pop-out");
-            window.history.back("-1");
+            this.$router.back();
         },
-        $to(p) {
-            this.$router.push(p);
+        $to(p, options = {}) {
+            if (options.replace) {
+                this.$router.replace(p);
+            } else {
+                this.$router.push(p);
+            }
         },
         $loading() {
-            this.$store.commit("loading");
+            Loading.loading();
         },
         $loaded() {
-            this.$store.commit("loaded");
-        },
-        /**
-         * [$encodeURI description] encode url 默认encode当前url
-         * @param  {[type]} url [description]
-         * @return {[type]}     [description]
-         */
-        $encodeURI(url) {
-            return window.encodeURIComponent(url ? url : window.location);
-        },
-        /**
-         * [$decodeURI description] decode url
-         * @param  {[type]} url [description]
-         * @return {[type]}     [description]
-         */
-        $decodeURI(url) {
-            return window.decodeURIComponent(url);
+            Loading.loaded();
         },
         $getParam(key, url) {
-            var reg = new RegExp("(^|&)" + key + "=([^&]*)(&|$)");
-            var r = (url ? url : window.location).search.substr(1).match(reg);
-            if (r != null) return decodeURI(r[2]);
-            return null;
+            return getParam(key, url);
         }
-    },
-    beforeDestroy() {
-        this.$loaded ? this.$loaded() : null;
-        this.$loaded ? this.$loaded() : null;
-        this.$indicator ? this.$indicator.close() : null;
     }
 });

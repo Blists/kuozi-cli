@@ -1,4 +1,5 @@
 @import "variables.less";
+@import "../../config/project/project.less";
 * {
     box-sizing: border-box;
 }
@@ -11,7 +12,8 @@ body {
 }
 
 body {
-    font-family: "Microsoft YaHei", Helvetica, "Hiragino Sans GB", Arial, sans-serif;
+    font-family: "Microsoft YaHei", Helvetica, "Hiragino Sans GB", Arial,
+        sans-serif;
 }
 
 ul,
@@ -25,16 +27,17 @@ p {
 input,
 textarea,
 button {
-    font-family: "Microsoft YaHei", Helvetica, "Hiragino Sans GB", Arial, sans-serif;
+    font-family: "Microsoft YaHei", Helvetica, "Hiragino Sans GB", Arial,
+        sans-serif;
     outline: none;
     border: none;
     background: none;
     -webkit-appearance: none;
 }
 
-button{
-    &:active{
-        opacity: .8;
+button {
+    &:active {
+        opacity: 0.8;
     }
 }
 
@@ -51,10 +54,12 @@ a {
     }
 }
 
-.hr {
-    display: block;
-    border-top: 1px solid @hr;
-    transform: scaleY(0.5);
+a,
+button,
+.btn {
+    &:active {
+        opacity: 0.5;
+    }
 }
 
 .hr-top {
@@ -65,7 +70,8 @@ a {
         top: 0;
         width: 100%;
         height: 1px;
-        background: linear-gradient(to bottom, #bfbfbf, #bfbfbf 50%, rgba(0, 0, 0, 0) 50%) no-repeat;
+        background: linear-gradient(to bottom, @hr, @hr 50%, transparent 50%)
+            no-repeat;
     }
 }
 
@@ -77,7 +83,8 @@ a {
         bottom: 0;
         width: 100%;
         height: 1px;
-        background: linear-gradient(to top, #bfbfbf, #bfbfbf 50%, rgba(0, 0, 0, 0) 50%) no-repeat;
+        background: linear-gradient(to top, @hr, @hr 50%, transparent 50%)
+            no-repeat;
     }
 }
 
@@ -85,6 +92,14 @@ a {
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
+}
+
+.over-auto {
+    overflow: auto;
+}
+
+.over-hidden {
+    overflow: hidden;
 }
 
 .limit2 {
@@ -145,26 +160,5 @@ a {
     float: right;
 }
 
-.layer {
-    position: fixed;
-    width: 100%;
-    height: 100%;
-    left: 0;
-    top: 0;
-    z-index: 99;
-    &:before {
-        content: "";
-        position: fixed;
-        left: 0;
-        top: 0;
-        z-index: 99;
-        width: 100%;
-        height: 100%;
-        background: black;
-        opacity: 0.5;
-    }
-}
-
-@import "iphonex.less";
 @import "common.less";
-@import "mint.less";
+@import "iphonex.less";

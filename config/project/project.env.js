@@ -1,1 +1,1 @@
-module.exports = require("./" + process.env.PROJECT + "/env/env." + process.env.NODE_ENV + ".js");
+module.exports = require("./" + process.env.PROJECT + "/env/" + process.env.ENVJS);

@@ -28,7 +28,7 @@ Vue.directive("scroll-bottom", {
             el.scrollTop = el.scrollHeight;
         }, 10);
     },
-    componentUpdated(el, binding) {
+    componentUpdated(el) {
         setTimeout(function() {
             if (el.getAttribute("data-scroll-bottom") != "n") {
                 el.scrollTop = el.scrollHeight;
@@ -56,7 +56,7 @@ Vue.directive("scroll-head", {
     }
 });
 
-//移动端滑动
+// 移动端滑动
 var touchStart = function(e, el) {
     var touches = e.touches[0];
     el.dataset.tsx = touches.pageX;

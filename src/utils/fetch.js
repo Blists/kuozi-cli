@@ -4,43 +4,39 @@ import urls from "./../utils/urls";
 import axios from "axios";
 import { STRING } from "./constants";
 
+import Loading from "@yy/yy-loading";
+
 axios.defaults.headers["x-requested-with"] = "XMLHttpRequest";
 
-let fetch = function(method, baseURL, url, data, options, noLoading, noToast, vue) {
+let fetch = function (method, baseURL, url, data, options, noLoading, noToast, vue) {
     return new Promise((resolve, reject) => {
-        let token = localStorage.get(STRING.TOKEN);
-        let o = options || { headers: {} };
-        o.method = method;
-        o.baseURL = baseURL;
-        o.url = url;
-        o.data = data;
-        o.headers = o.headers || {};
-        o.headers["x-token"] = token;
+        options.method = method;
+        options.baseURL = baseURL;
+        options.url = url;
+        options.data = data;
+        options.headers["x-token"] = localStorage.get(STRING.TOKEN);
         if (!noLoading) {
-            vue && vue.$loading();
+            Loading.$loading();
         }
-        axios(o)
+        axios(options)
             .then(data => {
                 let res = data.data;
                 if (!noLoading) {
-                    vue && vue.$loaded();
+                    Loading.$loaded();
                 }
                 if (res.code == 0) {
-                    if (res.data === null || res.data === undefined) {
+                    if (!options.raw && (res.data === null || res.data === undefined)) {
                         resolve({});
                     } else {
                         resolve(res.data);
                     }
                 } else {
                     if (res.code == 999 && vue.$route.name != "index" && vue.$route.name != "login") {
-                        vue &&
-                            vue.$to({
-                                name: "login",
-                                query: { path: vue.$route.fullPath }
-                            });
+                        sessionStorage.setItem("$path", vue.$route.fullPath);
+                        vue && vue.$to({ name: "login" });
                     } else {
                         if (!noToast) {
-                            vue && vue.$toast(res.message);
+                            vue && vue.$yyToast.show(res.message);
                         }
                     }
                     reject();
@@ -50,54 +46,58 @@ let fetch = function(method, baseURL, url, data, options, noLoading, noToast, vu
                 if (!noToast) {
                     if (error.response && error.response.status) {
                         switch (error.response.status) {
-                        case 404:
-                            vue && vue.$toast(`错误代码404`);
-                            break;
-                        case 502:
-                            vue && vue.$toast(`服务器正在升级,请稍后再试`);
-                            break;
-                        case 504:
-                            vue && vue.$toast(`网络已断开`);
-                            break;
-                        default:
-                            vue && vue.$toast(`请求服务异常,请稍后再试（${error.response.status}）`);
-                            break;
+                            case 404:
+                                vue && vue.$yyToast.show(`错误代码404`);
+                                break;
+                            case 502:
+                                vue && vue.$yyToast.show(`服务器正在升级,请稍后再试`);
+                                break;
+                            case 504:
+                                vue && vue.$yyToast.show(`网络已断开`);
+                                break;
+                            default:
+                                vue && vue.$yyToast.show(`请求服务异常,请稍后再试（${error.response.status}）`);
+                                break;
                         }
                     }
                 }
                 if (!noLoading) {
-                    vue && vue.$loaded();
+                    Loading.$loaded();
                 }
                 reject();
             });
     });
 };
 
-let $get = function(restKey, join, options, noLoading, noToast, vue) {
-    if (typeof restKey === "string") {
-        restKey = ["default", restKey];
-    }
-    return fetch("get", project.projectConfig[restKey[0]].baseURL + "/" + project.projectConfig[restKey[0]].rootPath, join ? urls[restKey[1]].url + "/" + join : urls[restKey[1]].url, null, options, noLoading, noToast, vue);
+let $get = function (restKey, join, options, noLoading, noToast, vue) {
+    let { baseURL, url, ops } = fetchObj(restKey, join, options);
+    return fetch("get", baseURL, url, null, ops, noLoading, noToast, vue);
 };
 
-let $post = function(restKey, params, join, options, noLoading, noToast, vue) {
-    if (typeof restKey === "string") {
-        restKey = ["default", restKey];
-    }
-    return fetch("post", project.projectConfig[restKey[0]].baseURL + "/" + project.projectConfig[restKey[0]].rootPath, join ? urls[restKey[1]].url + "/" + join : urls[restKey[1]].url, params, options, noLoading, noToast, vue);
+let $post = function (restKey, params, join, options, noLoading, noToast, vue) {
+    let { baseURL, url, ops } = fetchObj(restKey, join, options);
+    return fetch("post", baseURL, url, params, ops, noLoading, noToast, vue);
 };
 
-let $put = function(restKey, join, params, options, noLoading, noToast, vue) {
-    if (typeof restKey === "string") {
-        restKey = ["default", restKey];
-    }
-    return fetch("put", project.projectConfig[restKey[0]].baseURL + "/" + project.projectConfig[restKey[0]].rootPath, join ? urls[restKey[1]].url + "/" + join : urls[restKey[1]].url, params, options, noLoading, noToast, vue);
+let $put = function (restKey, join, params, options, noLoading, noToast, vue) {
+    let { baseURL, url, ops } = fetchObj(restKey, join, options);
+    return fetch("put", baseURL, url, params, ops, noLoading, noToast, vue);
 };
 
-let $delete = function(restKey, join, params, options, noLoading, noToast, vue) {
+let $delete = function (restKey, join, params, options, noLoading, noToast, vue) {
+    let { baseURL, url, ops } = fetchObj(restKey, join, options);
+    return fetch("delete", baseURL, url, params, ops, noLoading, noToast, vue);
+};
+
+let fetchObj = function (restKey, join, options = {}) {
     if (typeof restKey === "string") {
         restKey = ["default", restKey];
     }
-    return fetch("delete", project.projectConfig[restKey[0]].baseURL + "/" + project.projectConfig[restKey[0]].rootPath, join ? urls[restKey[1]].url + "/" + join : urls[restKey[1]].url, params, options, noLoading, noToast, vue);
+    let projectConfig = project.projectConfig[restKey[0]];
+    let baseURL = projectConfig.baseURL + "/" + projectConfig.rootPath;
+    let url = urls[restKey[1]].url + (join ? "/" + join : "");
+    let ops = Object.assign({ headers: {} }, options);
+    return { baseURL, url, ops };
 };
+
 export { fetch, $get, $post, $put, $delete };

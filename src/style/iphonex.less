@@ -1,9 +1,11 @@
-@media screen and (width: 375px) and (height: 812px) {
+.ipx() {
     .app {
-        background-size: 100% @head-height + @ztl2 !important;
-        padding-bottom: @x-bottom !important;
+        // padding-bottom: 36px;
     }
-    .ui-head {
-        padding-top: @ztl2 !important;
-    }
+}
+@media screen and (device-width: 375px) and (device-height: 812px) and (height: 812px) {
+    .ipx();
+}
+@media screen and (device-width: 414px) and (device-height: 896px) and (height: 896px) {
+    .ipx();
 }

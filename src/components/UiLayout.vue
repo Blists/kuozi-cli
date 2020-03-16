@@ -1,21 +1,28 @@
 <template>
-    <div class="ui-layout" :class="{full:full}">
-        <div v-if="!flex" ref="top" class="ui-layout-top">
-            <slot name="top"></slot>
+    <div class="ui-layout" :class="{full}">
+        <div class="ui-layout-top">
+            <slot name="top" />
         </div>
-        <div :style="style" class="ui-layout-container" :class="{flex:flex}">
-            <slot></slot>
+        <div ref="scroll" class="ui-layout-container">
+            <div class="scroll-container" :class="{'no-scroll':noScroll,'flex-container':flex}">
+                <slot />
+            </div>
         </div>
-        <div v-if="!flex" ref="bottom" class="ui-layout-bottom">
-            <slot name="bottom"></slot>
+        <div class="ui-layout-bottom">
+            <slot name="bottom" />
         </div>
     </div>
 </template>
 
 <script>
+import BScroll from "better-scroll";
 export default {
     props: {
         full: {
+            type: Boolean,
+            default: false
+        },
+        noScroll: {
             type: Boolean,
             default: false
         },
@@ -25,37 +32,18 @@ export default {
         }
     },
     data() {
-        return {
-            style: {
-                paddingTop: 0,
-                paddingBottom: 0
-            },
-            top: {},
-            bottom: {}
-        };
+        return {};
     },
-    mounted() {
-        if (this.flex) return;
-        this.top = this.$refs.top;
-        this.bottom = this.$refs.bottom;
-        let config = { attributes: true, characterData: true, childList: true, subtree: true };
-        let observer1 = new MutationObserver(this.resizeTop);
-        observer1.observe(this.top, config);
-        let observer2 = new MutationObserver(this.resizeBottom);
-        observer2.observe(this.bottom, config);
-        this.resizeTop();
-        this.resizeBottom();
-    },
-    methods: {
-        resizeTop() {
-            setTimeout(() => {
-                this.style.paddingTop = this.top.clientHeight + "px";
-            }, 50);
-        },
-        resizeBottom() {
-            setTimeout(() => {
-                this.style.paddingBottom = this.bottom.clientHeight + "px";
-            }, 50);
+    created() {
+        if (this.noScroll || this.flex) {
+            //
+        } else {
+            this.$nextTick(() => {
+                this.$refs.scroll && new BScroll(this.$refs.scroll, {
+                    click: true,
+                    mouseWheel: true
+                });
+            });
         }
     }
 };
@@ -63,24 +51,24 @@ export default {
 
 <style lang="less">
 .ui-layout {
+    display: flex;
+    flex-direction: column;
     height: 100%;
+    overflow: hidden;
     .ui-layout-container {
-        &.flex {
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
+        flex: 1;
+        overflow: hidden;
+        .scroll-container {
+            &.no-scroll {
+                height: 100%;
+            }
+            &.flex-container {
+                display: flex;
+                flex-direction: column;
+                height: 100%;
+                overflow: hidden;
+            }
         }
-    }
-    .ui-layout-top {
-        position: fixed;
-        top: 0;
-        width: 100%;
-    }
-    .ui-layout-bottom {
-        position: fixed;
-        bottom: 0;
-        width: 100%;
     }
     &.full {
         position: fixed;

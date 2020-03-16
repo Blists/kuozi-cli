@@ -7,27 +7,8 @@ import Vuex from "vuex";
 Vue.use(Vuex);
 
 const store = new Vuex.Store({
-    state: {
-        // 加载中
-        spinner: true,
-        loading: false,
-        // 过渡模式
-        transition: ""
-    },
-    mutations: {
-        spinner(state, param) {
-            state.spinner = param;
-        },
-        loading(state) {
-            state.loading = true;
-        },
-        loaded(state) {
-            state.loading = false;
-        },
-        transition(state, p) {
-            state.transition = p;
-        }
-    },
+    state: {},
+    mutations: {},
     actions: {},
     getters: {},
     modules: {},

@@ -1,6 +1,6 @@
 <template>
     <ui-layout>
-        <ui-head slot="top" title="登录" no-back></ui-head>
+        <ui-head slot="top" title="登录" no-back/>
         <button @click="login">登录</button>
     </ui-layout>
 </template>

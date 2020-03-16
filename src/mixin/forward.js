@@ -3,7 +3,7 @@ export default {
     methods: {
         forward(e, token) {
             if (e === false) {
-                this.$router.replace({ name: "login" });
+                this.$to({ name: "login" }, { replace: true });
             } else {
                 if (e) {
                     window.login = true;
@@ -14,14 +14,12 @@ export default {
                 let obj = { name: STRING.HOME };
                 let path = sessionStorage.getItem("$path");
                 sessionStorage.clear("$path");
+                let forwardReplace = sessionStorage.getItem("$forwardReplace");
+                sessionStorage.clear("$path");
                 if (path && path != "/" && !/^\/index/.test(path) && !/^\/login/.test(path)) {
                     obj = { path };
                 }
-                if (this.$route.query.forwardReplace) {
-                    this.$router.replace(obj);
-                } else {
-                    this.$router.push(obj);
-                }
+                this.$to(obj, { replace: forwardReplace });
             }
         }
     }

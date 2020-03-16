@@ -1,8 +1,8 @@
 <template>
     <transition :name="noFade?'':'fade'">
-        <div class="ui-layer" v-if="show" @click="hide">
+        <div v-if="show" class="ui-layer" @click="hide">
             <div class="layer-body" :class="{middle:postion=='middle',left:postion=='left',right:postion=='right',bottom:postion=='bottom',full:full,'ovisible':overflowVisible}" @click.stop=";">
-                <slot></slot>
+                <slot />
             </div>
         </div>
     </transition>
@@ -41,16 +41,6 @@ export default {
             if (!this.modalClose) return;
             this.$emit("update:show", false);
             this.$emit("close");
-        }
-    },
-    watch: {
-        show: {
-            immediate: true,
-            handler(val, v) {
-                if (this.full && v !== undefined) {
-                    this.$store.commit("showTaber", !val);
-                }
-            }
         }
     }
 };

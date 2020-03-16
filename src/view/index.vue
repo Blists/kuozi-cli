@@ -1,5 +1,5 @@
 <template>
-    <ui-layout class="index"></ui-layout>
+    <ui-layout class="index"/>
 </template>
 <script>
 import forward from "./../mixin/forward.js";
@@ -15,6 +15,7 @@ export default {
         };
     },
     created() {
+        sessionStorage.setItem("$forwardReplace", true);
         // 开始登录校验
         window.intercept = true;
         if (login) {

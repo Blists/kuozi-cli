@@ -2,15 +2,15 @@
     <div class="ui-head">
         <div class="head-btns">
             <template v-if="!noBack">
-                <a v-if="close" class="head-back" href="close"></a>
-                <div v-else class="head-back" @click="back"></div>
+                <a v-if="close" class="head-back" href="close"/>
+                <div v-else class="head-back" @click="back"/>
             </template>
-            <div class="head-btns-container"></div>
-            <slot name="right"></slot>
+            <div class="head-btns-container"/>
+            <slot name="right"/>
         </div>
         <div class="head-title" :class="{'head-title-text':title}">
-            <span v-if="title" v-text="title"></span>
-            <slot name="title"></slot>
+            <span v-if="title" v-text="title"/>
+            <slot name="title"/>
         </div>
     </div>
 </template>
@@ -19,9 +19,7 @@
 export default {
     props: {
         title: {},
-        backClick: {
-            type: Function
-        },
+        backClick: { type: Function },
         noBack: {
             type: Boolean,
             default: false
