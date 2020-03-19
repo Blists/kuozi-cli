@@ -1,4 +1,4 @@
-import { INFO } from "../../config/project/project.env";
+import { INFO } from "../../config/project/project";
 // 常量
 const STRING = {
     INFO: INFO,

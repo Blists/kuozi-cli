@@ -10,6 +10,7 @@ import { fetch, $get, $post, $put, $delete } from "../utils/fetch";
 
 import UiLayout from "../components/UiLayout.vue";
 import UiHead from "../components/UiHead.vue";
+import { STRING } from "../utils/constants";
 
 Vue.component("ui-layout", UiLayout);
 Vue.component("ui-head", UiHead);
@@ -68,7 +69,7 @@ Vue.mixin({
             }
         },
         $loading() {
-            Loading.$loading();
+            Loading.$loading({ color: STRING.INFO });
         },
         $loaded() {
             Loading.$loaded();

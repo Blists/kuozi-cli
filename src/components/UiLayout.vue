@@ -3,7 +3,16 @@
         <div class="ui-layout-top">
             <slot name="top" />
         </div>
-        <UiContainer class="ui-layout-container" :no-bs="noBs" :flex="flex">
+        <UiContainer
+            ref="scroll"
+            class="ui-layout-container"
+            :no-bs="noBs"
+            :flex="flex"
+            :pull-up-load="pullUpLoad"
+            :pull-down-refresh="pullDownRefresh"
+            @pull-up="pullUp"
+            @pull-down="pullDown"
+        >
             <slot />
         </UiContainer>
         <div class="ui-layout-bottom">
@@ -28,24 +37,54 @@ export default {
         flex: {
             type: Boolean,
             default: false
-        }
+        },
+
+        pullUpLoad: {
+            type: Boolean,
+            default: false
+        },
+        bottomText: {},
+        bottomLoadingText: {},
+        bottomNoMoreText: {},
+        pullDownRefresh: {
+            type: Boolean,
+            default: false
+        },
+        topText: {},
+        topLoadingText: {}
     },
     data() {
         return {};
+    },
+    methods: {
+        refresh() {
+            this.$refs.scroll.refresh();
+        },
+        uploaded(nomore) {
+            this.$refs.scroll.uploaded(nomore);
+        },
+        pullUp() {
+            this.$emit("pull-up");
+        },
+        downloaded() {
+            this.$refs.scroll.downloaded();
+        },
+        pullDown() {
+            this.$emit("pull-down");
+        }
     }
 };
 </script>
 
 <style lang="less">
+@import "./../style/variables";
 .ui-layout {
     display: flex;
     flex-direction: column;
     height: 100%;
     overflow: hidden;
-    .ui-layout-container {
-        flex: 1;
-        overflow: hidden;
-    }
+    background: @hr;
+    .ui-layout-container {}
     &.full {
         position: fixed;
         top: 0;
