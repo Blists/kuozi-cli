@@ -14,18 +14,6 @@ export default {
     data() {
         return { transitionName: "forward" };
     },
-    created() {
-        let path = window.location.hash.replace("#", "");
-        if (path.match("/login") || path.match("/index")) {
-            sessionStorage.setItem("$path", "");
-        }
-        sessionStorage.setItem("$path", path);
-    },
-    mounted() {
-        this.$nextTick(() => {
-            this.$to({ name: "index" });
-        });
-    },
     watch: {
         $route(to, from) {
             this.transitionName = (from.name && from.name != "index" && (!toNoTransitionPage[to.name] || to.params[STRING.VNK + "-dir"] === "back") && to.params && to.params[STRING.VNK + "-dir"]) || "";

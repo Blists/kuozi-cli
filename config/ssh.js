@@ -1,7 +1,7 @@
 module.exports = {
     default: {
         // 测试环境发布
-        "env.dev": {
+        "env.test": {
             host: "",
             port: "",
             user: "",

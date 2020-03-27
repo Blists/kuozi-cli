@@ -2,7 +2,13 @@ import Vue from "vue";
 import { dateFmt, numFmtUnit } from "@yy/yy-tools";
 
 Vue.filter("dateFmt", function(value, fmt) {
-    return dateFmt(value, fmt);
+    let fmtDate = "";
+    try {
+        fmtDate = dateFmt(value, fmt);
+    } catch (error) {
+        //
+    }
+    return fmtDate;
 });
 
 Vue.filter("strDateFmt", function(value, fmt) {
@@ -11,7 +17,13 @@ Vue.filter("strDateFmt", function(value, fmt) {
         return value;
     }
     var formatedDate = (value + "").replace(pattern, "$1-$2-$3");
-    return dateFmt(formatedDate, fmt);
+    let fmtDate = "";
+    try {
+        fmtDate = dateFmt(formatedDate, fmt);
+    } catch (error) {
+        //
+    }
+    return fmtDate;
 });
 
 Vue.filter("numFmtUnit", function(s, unit, decimal = 0, trim) {

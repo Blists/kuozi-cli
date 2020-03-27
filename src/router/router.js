@@ -62,12 +62,26 @@ let router = new Router({
 // 路由跳转钱操作
 router.beforeEach((to, form, next) => {
     Loading.$loaded();
-    // 登录过滤
-    if (window.intercept && to.meta.login && !window.login) {
-        sessionStorage.setItem("$path", to.fullPath);
-        next({ name: "login" });
-    } else {
+    if (to && to.name === "index") {
         next();
+    } else {
+        if (form && form.name) {
+            // 登录过滤
+            if (window.intercept && to.meta.login && !window.login) {
+                sessionStorage.setItem("$path", to.fullPath);
+                next({ name: "login" });
+            } else {
+                next();
+            }
+        } else {
+            // 刷新页面
+            let path = window.location.hash.replace("#", "");
+            if (path.match("/login") || path.match("/index")) {
+                sessionStorage.setItem("$path", "");
+            }
+            sessionStorage.setItem("$path", path);
+            next({ name: "index" });
+        }
     }
 });
 

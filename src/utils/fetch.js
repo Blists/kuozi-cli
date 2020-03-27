@@ -14,7 +14,7 @@ let fetch = function (method, baseURL, url, data, options, noLoading, noToast, v
         options.baseURL = baseURL;
         options.url = url;
         options.data = data;
-        options.headers["x-token"] = localStorage.get(STRING.TOKEN);
+        options.headers["x-token"] = localStorage.getItem(STRING.TOKEN);
         if (!noLoading) {
             Loading.$loading();
         }
