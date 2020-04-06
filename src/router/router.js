@@ -63,12 +63,14 @@ let router = new Router({
 router.beforeEach((to, form, next) => {
     Loading.$loaded();
     if (to && to.name === "index") {
+        sessionStorage.setItem("$forwardReplace", true);
         next();
     } else {
         if (form && form.name) {
             // 登录过滤
-            if (window.intercept && to.meta.login && !window.login) {
+            if (to.meta.login && !window.login) {
                 sessionStorage.setItem("$path", to.fullPath);
+                sessionStorage.setItem("$forwardReplace", true);
                 next({ name: "login" });
             } else {
                 next();
@@ -76,10 +78,9 @@ router.beforeEach((to, form, next) => {
         } else {
             // 刷新页面
             let path = window.location.hash.replace("#", "");
-            if (path.match("/login") || path.match("/index")) {
-                sessionStorage.setItem("$path", "");
+            if (path != "/" && ! path.match("/login") && ! path.match("/index")) {
+                sessionStorage.setItem("$path", path);
             }
-            sessionStorage.setItem("$path", path);
             next({ name: "index" });
         }
     }

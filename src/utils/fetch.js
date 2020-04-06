@@ -16,7 +16,7 @@ let fetch = function (method, baseURL, url, data, options, noLoading, noToast, v
         options.data = data;
         options.headers["x-token"] = localStorage.getItem(STRING.TOKEN);
         if (!noLoading) {
-            Loading.$loading();
+            Loading.$loading({ color: STRING.INFO });
         }
         axios(options)
             .then(data => {
