@@ -1,7 +1,7 @@
 module.exports = {
     default: {
         // 测试环境发布
-        "env.dev.js": {
+        "env.test": {
             host: "",
             port: "",
             user: "",
@@ -10,7 +10,7 @@ module.exports = {
             remotePath: ""
         },
         // 生产环境发布
-        "env.production.js": {
+        "env.production": {
             host: "",
             port: "",
             user: "",
