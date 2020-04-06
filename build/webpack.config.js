@@ -68,7 +68,7 @@ var webpackConfig = {
                     loader: "url-loader",
                     options: {
                         limit: 10000,
-                        name: "./img/[name]" + contenthash() + ".[ext]"
+                        name: "./img/[name].[hash:7].[ext]"
                     }
                 },
                 {
@@ -76,7 +76,7 @@ var webpackConfig = {
                     loader: "file-loader",
                     options: {
                         limit: 10000,
-                        name: "./fonts/[name]" + contenthash() + ".[ext]"
+                        name: "./fonts/[name].[hash:7].[ext]"
                     }
                 }
             ]

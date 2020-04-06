@@ -63,8 +63,12 @@ Vue.mixin({
             this.$store.commit("transition", false);
             window.history.back("-1");
         },
-        $to(p) {
-            this.$router.push(p);
+        $to(p, options = {}) {
+            if (options.replace) {
+                this.$router.replace(p);
+            } else {
+                this.$router.push(p);
+            }
         },
         $open(e) {
             e.params = e.params || {};

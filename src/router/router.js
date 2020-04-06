@@ -38,12 +38,27 @@ let router = new Router({
 
 // 路由跳转前操作
 router.beforeEach((to, form, next) => {
-    // 登录过滤
-    if (window.intercept && to.meta.login && !window.login) {
-        sessionStorage.setItem("$path", to.fullPath);
-        next({ name: "login", query: { forwardReplace: true } });
-    } else {
+    if (to && to.name === "index") {
+        sessionStorage.setItem("$forwardReplace", true);
         next();
+    } else {
+        if (form && form.name) {
+            // 登录过滤
+            if (to.meta.login && !window.login) {
+                sessionStorage.setItem("$path", to.fullPath);
+                sessionStorage.setItem("$forwardReplace", true);
+                next({ name: "login" });
+            } else {
+                next();
+            }
+        } else {
+            // 刷新页面
+            let path = window.location.hash.replace("#", "");
+            if (path != "/" && ! path.match("/login") && ! path.match("/index")) {
+                sessionStorage.setItem("$path", path);
+            }
+            next({ name: "index" });
+        }
     }
 });
 

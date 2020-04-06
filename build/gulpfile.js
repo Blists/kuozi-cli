@@ -264,5 +264,5 @@ const chooseBase = gulp.series(chooseProject, chooseEnv, chooseSplit);
 gulp.task("dev", gulp.series(setDev, chooseBase, devTack));
 gulp.task("build", gulp.series(chooseBase, chooseHash, chooseZip, buildTask));
 gulp.task("publish", gulp.series("build", sftp));
-gulp.task("sftp", gulp.series(chooseBase, sftp));
+gulp.task("sftp", gulp.series(chooseProject, chooseEnv, sftp));
 gulp.task("analyze", gulp.series(chooseBase, analyze, buildTask));
