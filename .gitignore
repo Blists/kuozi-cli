@@ -47,4 +47,3 @@ jspm_packages
 *.iml
 
 dist
-package-lock.json
