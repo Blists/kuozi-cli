@@ -2,6 +2,8 @@ var gulp = require("gulp");
 
 var path = require("path");
 var fs = require("fs");
+var os = require("os");
+
 var inquirer = require("inquirer");
 
 var gulpSftp = require("gulp-sftp-up4");
@@ -24,6 +26,7 @@ const devTack = () => {
         contentBase: "./dist",
         hot: true,
         host: "0.0.0.0",
+        allowedHosts: [os.hostname()],
         stats: {
             colors: true,
             modules: false,
