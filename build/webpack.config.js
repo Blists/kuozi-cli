@@ -23,6 +23,10 @@ const contenthash = () => {
     return global.HASH ? ".[contenthash]" : "";
 };
 
+const exclude = (e) => {
+    return e.match("node_modules") && !e.match("node_modules/@yy/");
+};
+
 var webpackConfig = {
     // webpack基础配置
     basicConfig: {
@@ -39,7 +43,7 @@ var webpackConfig = {
             rules: [
                 {
                     test: /\.js$/,
-                    exclude: /(node_modules)/,
+                    exclude,
                     use: {
                         loader: "babel-loader",
                         options: { configFile: "./.babelrc" }
@@ -47,7 +51,7 @@ var webpackConfig = {
                 },
                 {
                     test: /routers\.js$/,
-                    exclude: /(node_modules)/,
+                    exclude,
                     use: [
                         {
                             loader: "babel-loader",
