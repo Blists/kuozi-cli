@@ -1,6 +1,6 @@
 <template>
     <div class="ui-page">
-        <el-pagination :layout="layout" :page-size="pageSize" :total="total" background @size-change="handleSizeChange" @current-change="handleCurrentChange"/>
+        <el-pagination :layout="layout" :current-page="currentPage" :page-size="pageSize" :total="total" background @size-change="handleSizeChange" @current-change="handleCurrentChange"/>
     </div>
 </template>
 
@@ -16,17 +16,35 @@ export default {
             type: Number,
             default: CONST.PAGESIZE,
         },
+        pageNo: {
+            type: Number,
+            default: 1,
+        },
         total: {
             type: Number,
             default: 0
-        }
+        },
+    },
+    data() {
+        return { currentPage: 0 };
     },
     methods: {
+        resetCurrentPage(currentPage = 1) {
+            this.currentPage = currentPage;
+        },
         handleSizeChange(val) {
             this.$emit("size-change", val);
         },
         handleCurrentChange(val) {
+            this.$emit("update:page-no", val);
             this.$emit("current-change", val);
+        }
+    },
+    watch: {
+        pageNo() {
+            if (this.pageNo !== this.currentPage) {
+                this.currentPage = this.pageNo;
+            }
         }
     }
 };
@@ -35,6 +53,6 @@ export default {
 <style>
 .ui-page {
     text-align: center;
-    padding: 20px 150px 20px 0;
+    padding: 20px 0;
 }
 </style>

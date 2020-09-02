@@ -20,7 +20,7 @@
             </div>
             <input v-if="show" ref="input" type="file" accept="image/*" title @change="change" @dragleave.stop="dragHover=false" @drop.stop="dragHover=false" @dragover.stop="dragHover=true" />
         </div>
-        <el-dialog :visible.sync="preViewVisible" width="60%">
+        <el-dialog :visible.sync="preViewVisible" width="60%" append-to-body>
             <img v-if="preViewSrc" class="pre-img" :src="preImg+preViewSrc" />
         </el-dialog>
     </div>
