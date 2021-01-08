@@ -1,4 +1,17 @@
 {
-  "presets": ["@babel/preset-env"],
-  "plugins": ["@babel/plugin-syntax-dynamic-import"]
+    "presets": [
+        "@babel/preset-env"
+    ],
+    "plugins": [
+        "@babel/plugin-syntax-dynamic-import",
+        [
+            "import",
+            {
+                "libraryName": "vant",
+                "libraryDirectory": "es",
+                "style": true
+            },
+            "vant"
+        ]
+    ]
 }

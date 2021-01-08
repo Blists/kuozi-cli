@@ -1,5 +1,5 @@
 <template>
-    <ui-layout class="index"/>
+    <ui-layout class="index" />
 </template>
 <script>
 import forward from "./../mixin/forward.js";
@@ -7,12 +7,7 @@ import { login } from "../router/routerConfig.js";
 export default {
     mixins: [forward],
     data() {
-        return {
-            fail: {
-                auth: false,
-                login: false
-            }
-        };
+        return {};
     },
     created() {
         if (login) {
@@ -27,23 +22,13 @@ export default {
         // token有效 forward(false)
         auth() {
             this.forward(false);
-        }
-    }
+        },
+    },
 };
 </script>
 <style lang="less" scoped>
 @import "./../style/variables.less";
 .index {
-    background: @gray url(./../assets/img/logo.png) no-repeat center 150px;
-    .index-fail {
-        width: 100%;
-        height: 100%;
-        text-align: center;
-        line-height: 500px;
-        a {
-            color: @info;
-            text-decoration: underline;
-        }
-    }
+    // background: @gray url(./../assets/img/logo.png) no-repeat center 150px;
 }
 </style>

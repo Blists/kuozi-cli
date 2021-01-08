@@ -3,7 +3,6 @@ var gulp = require("gulp");
 var path = require("path");
 var fs = require("fs");
 var os = require("os");
-
 var inquirer = require("inquirer");
 
 var gulpSftp = require("gulp-sftp-up4");
@@ -173,136 +172,182 @@ const setDev = (cb) => {
 
 // 选择项目
 const chooseProject = (cb) => {
-    dirChoose("./../config/project", "isDirectory", "*****请选择项目：").then(res => {
-        global.PROJECT = res;
+    if (process.env.ENV_PROJECT === undefined) {
+        dirChoose("./../config/project", "isDirectory", "*****请选择项目：").then(res => {
+            global.PROJECT = res;
+            cb();
+        });
+    } else {
+        global.PROJECT = process.env.ENV_PROJECT;
         cb();
-    });
+    }
 };
 
 // 选择环境
 const chooseEnv = (cb) => {
-    let dirPath = path.join("./../config/project", global.PROJECT, "env");
-    dirChoose(dirPath, "isFile", "*****请选择配置文件：", true).then(res => {
-        global.ENVJS = res;
+    if (process.env.ENV_ENVJS === undefined) {
+        let dirPath = path.join("./../config/project", global.PROJECT, "env");
+        dirChoose(dirPath, "isFile", "*****请选择配置文件：", true).then(res => {
+            global.ENVJS = res;
+            cb();
+        });
+    } else {
+        global.ENVJS = process.env.ENV_ENVJS;
         cb();
-    });
+    }
 };
 
 // 是否带hash后缀
 const chooseHash = (cb) => {
-    choose("*****是否带hash后缀？").then(res => {
-        global.HASH = res;
+    if (process.env.ENV_HASH === undefined) {
+        choose("*****是否带hash后缀？").then(res => {
+            global.HASH = res;
+            cb();
+        });
+    } else {
+        global.HASH = process.env.ENV_HASH == 1;
         cb();
-    });
+    }
 };
 
 // 是否分割
 const chooseSplit = (cb) => {
-    choose("*****是否动态加载路由？").then(res => {
-        if (res) {
-            let allRoutes = [];
-            var dir = "./../src/view";
-            var readdir = function (d) {
-                var files = fs.readdirSync(d);
-                for (let filename of files) {
-                    var fullname = path.join(d, filename);
-                    var stats = fs.statSync(fullname);
-                    if (stats.isDirectory()) {
-                        readdir(fullname);
-                    } else {
-                        if (/.vue$/.test(filename)) {
-                            allRoutes.push({
-                                file: filename,
-                                path: fullname
-                                    .replace("../src/view", "")
-                                    .replace("..\\src\\view", "")
-                                    .replace(".vue", "")
-                                    .toString()
-                            });
-                        }
-                    }
-                }
-            };
-            readdir(dir);
-            var pathProcess = function (p) {
-                return {
-                    name: p.split(/\//.test(p) ? "/" : "\\").pop(),
-                    path: p
-                };
-            };
-            var pushRoute = function (routesObj, path, fullPath) {
-                let routes = Object.values(routesObj);
-                let splitChart = /\//.test(path) ? "/" : "\\";
-                let route = routes.find(r => path.startsWith(r.path + splitChart));
-                let name = pathProcess(path).name;
-                let r = {
-                    name,
-                    path,
-                    meta: { login: false },
-                    component: `$() => import ('./../view${fullPath}.vue')$`
-                };
-                if (route) {
-                    let relaPath = path.replace(route.path + splitChart, "");
-                    if (route.children) {
-                        pushRoute(route.children, relaPath, fullPath);
-                    } else {
-                        route.children = { [name]: Object.assign(r, { path: relaPath.replace(splitChart, "") }) };
-                    }
-                } else {
-                    routesObj[name] = r;
-                }
-            };
-            var orderRoutes = require("lodash").orderBy(allRoutes, ["path"], ["asc"]);
-            let routesObj = {};
-            for (let arr of orderRoutes) {
-                pushRoute(routesObj, arr.path, arr.path);
-            }
-            global.ROUTES = JSON.stringify(routesObj).replace(/"\$/g, "").replace(/\$"/g, "");
-        } else {
-            // eslint-disable-next-line no-useless-escape
-            let codeRoutes = `{}; const components = require.context("./../view/", true, /\.vue$/);
-            var pathProcess = function (p) {
-                return {
-                    name: p.split("/").pop(),
-                    path: p
-                };
-            };
-            var pushRoute = function (routesObj, path, component) {
-                let routes = Object.values(routesObj);
-                let route = routes.find(r => path.startsWith(r.path + "/"));
-                let name = pathProcess(path).name;
-                let r = {
-                    name,
-                    path,
-                    meta: { login: false },
-                    component
-                };
-                if (route) {
-                    r.path = path.replace(route.path + "/", "");
-                    if (route.children) {
-                        pushRoute(route.children, r.path, component);
-                    } else {
-                        route.children = { [name]: r };
-                    }
-                } else {
-                    routesObj[name] = r;
-                }
-            };
-            components.keys().forEach(key => {
-                let path = key.replace(".", "").replace(".vue", "");
-                pushRoute(routes,path,components(key).default);
-            });`;
-            global.ROUTES = codeRoutes;
-        }
+    if (process.env.ENV_SPLIT === undefined) {
+        choose("*****是否动态加载路由？").then(res => {
+            createRouter(res);
+            cb();
+        });
+    } else {
+        createRouter(process.env.ENV_SPLIT == 1);
         cb();
-    });
+    }
+
 };
+
+const createRouter = (split) => {
+    if (split) {
+        let allRoutes = [];
+        var dir = "./../src/view";
+        var readdir = function (d) {
+            var files = fs.readdirSync(d);
+            for (let filename of files) {
+                var fullname = path.join(d, filename);
+                var stats = fs.statSync(fullname);
+                if (stats.isDirectory()) {
+                    readdir(fullname);
+                } else {
+                    if (/.vue$/.test(filename)) {
+                        allRoutes.push({
+                            file: filename,
+                            path: fullname
+                                .replace("../src/view", "")
+                                .replace("..\\src\\view", "")
+                                .replace(".vue", "")
+                                .toString()
+                        });
+                    }
+                }
+            }
+        };
+        readdir(dir);
+        var pathProcess = function (p) {
+            return {
+                name: p.split(/\//.test(p) ? "/" : "\\").pop(),
+                path: p
+            };
+        };
+        var isChild = function (routes, parent, name, route, flag) {
+            let f;
+            for (let n in routes) {
+                if (n == parent) {
+                    flag = true;
+                    if (routes[parent].children) {
+                        routes[parent].children[name] = route;
+                    } else {
+                        routes[parent].children = { [name]: route };
+                    }
+                } else if (routes[n].children) {
+                    f = isChild(routes[n].children, parent, name, route, flag);
+                }
+            }
+            return flag || f;
+        };
+
+        var orderRoutes = require("lodash").orderBy(allRoutes, ["path"], ["asc"]);
+        let routesObj = {};
+        for (let arr of orderRoutes) {
+            let path = arr.path;
+            let curr = pathProcess(path);
+            let parent = pathProcess(curr.path).name;
+            let route = {
+                name: curr.name,
+                path: path,
+                meta: { login: false },
+                component: `$() => import ('./../view${path}.vue')$`
+            };
+            let flag = isChild(routesObj, parent, curr.name, route, false);
+            if (!flag) {
+                routesObj[curr.name] = route;
+            }
+        }
+        global.ROUTES = JSON.stringify(routesObj).replace(/"\$/g, "").replace(/\$"/g, "");
+    } else {
+        let codeRoutes = `{};
+        const components = require.context("./../view/", true, /\.vue$/);
+        var pathProcess = function (p) {
+            return {
+                name: p.split("/").pop(),
+                path: p
+            };
+        };
+        let isChild = (routes, parent, name, route, flag) => {
+            let f;
+            for (let n in routes) {
+                if (n == parent) {
+                    flag = true;
+                    if (routes[parent].children) {
+                        routes[parent].children[name] = route;
+                    } else {
+                        routes[parent].children = {
+                            [name]: route
+                        };
+                    }
+                } else if (routes[n].children) {
+                    f = isChild(routes[n].children, parent, name, route, flag);
+                }
+            }
+            return flag || f;
+        };
+        components.keys().forEach(key => {
+            let path = key.replace(".", "").replace(".vue", "");
+            let curr = pathProcess(path);
+            let parent = pathProcess(curr.path).name;
+            let route = {
+                name: curr.name,
+                path: path,
+                meta: { login: false },
+                component: components(key).default
+            };
+            let flag = isChild(routes, parent, curr.name, route, false);
+            if (!flag) {
+                routes[curr.name] = route;
+            }
+        });`;
+        global.ROUTES = codeRoutes;
+    }
+};
+
 // 是否压缩
 const chooseZip = (cb) => {
-    choose("*****是否压缩？").then(res => {
-        global.ZIP = res;
+    if (process.env.ENV_ZIP === undefined) {
+        choose("*****是否压缩？").then(res => {
+            global.ZIP = res;
+            cb();
+        });
+    } else {
+        global.ZIP = process.env.ENV_ZIP == 1;
         cb();
-    });
+    }
 };
 
 // 代码上传

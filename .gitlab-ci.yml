@@ -1,0 +1,112 @@
+stages:
+    - build
+
+variables:
+    SYS_NAME: "VueMobile模版"
+    FOLDER_NAME: "app"
+    REMOTE_FOLDER: "/opt/static/vue"
+    REMOTE_FULL_PATH: "$REMOTE_FOLDER/$FOLDER_NAME"
+
+before_script:
+    - if [ "$FOLDER_NAME" == "" ]; then echo "variables[FOLDER_NAME]配置错误"&&exit 1; fi
+    - if [ "$REMOTE_FOLDER" == "" ] || [ "$REMOTE_FOLDER" == "/" ] || [ "$REMOTE_FOLDER" == "/opt" ]; then echo "variables[REMOTE_FOLDER]错误"&&exit 1; fi
+    - COMMIT_MSG=`git log --pretty=format:%cn：%s -1`
+    - npm i --registry=http://172.28.200.15:8081/nexus/content/groups/npm-all/
+
+cache:
+    paths:
+        - node_modules/
+
+测试环境:
+    stage: build
+    variables:
+        ENV_NAME: 测试环境
+        ENV_URL: https://dev.yunyesoft.com/static/vue/$FOLDER_NAME
+    tags:
+        - test
+    only:
+        - release
+    environment:
+        name: test
+        url: $ENV_URL
+    script:
+        - export ENV_PROJECT=default&&export ENV_ENVJS=env.test.js&&export ENV_HASH=1&&export ENV_SPLIT=1&&export ENV_ZIP=0
+        - npm run build
+        # 删除远程文件夹
+        - ssh root@172.28.200.75 rm -rf $REMOTE_FULL_PATH
+        # 复制到目标服务器目录
+        - scp -r ./dist root@172.28.200.75:$REMOTE_FULL_PATH
+        # 消息提醒
+        - /opt/webhook/webhook_qywx.sh $SYS_NAME$ENV_NAME部署成功\\n[$ENV_URL]\($ENV_URL\)\\n\`\`\`\\n$COMMIT_MSG\\n\`\`\`
+
+预生产环境:
+    stage: build
+    variables:
+        ENV_NAME: 预生产环境
+        ENV_URL: https://se.yunyesoft.com:8443/static/vue/$FOLDER_NAME
+    tags:
+        - se
+    only:
+        - release
+    when: manual
+    environment:
+        name: se
+        url: $ENV_URL
+    script:
+        - export ENV_PROJECT=default&&export ENV_ENVJS=env.se.js&&export ENV_HASH=1&&export ENV_SPLIT=1&&export ENV_ZIP=1
+        - npm run build
+        # 删除远程文件夹
+        - ssh root@172.28.200.252 rm -rf $REMOTE_FULL_PATH
+        # 复制到目标服务器目录
+        - scp -r ./dist root@172.28.200.252:$REMOTE_FULL_PATH
+        # 消息提醒
+        - /opt/webhook/webhook_qywx.sh $SYS_NAME$ENV_NAME部署成功\\n[$ENV_URL]\($ENV_URL\)\\n\`\`\`\\n$COMMIT_MSG\\n\`\`\`
+
+演示环境:
+    stage: build
+    variables:
+        ENV_NAME: 演示环境
+        ENV_URL: https://show.yunyesoft.com/static/vue/$FOLDER_NAME
+    tags:
+        - show
+    only:
+        - release
+    when: manual
+    environment:
+        name: show
+        url: $ENV_URL
+    script:
+        - export ENV_PROJECT=default&&export ENV_ENVJS=env.show.js&&export ENV_HASH=1&&export ENV_SPLIT=1&&export ENV_ZIP=1
+        - npm run build
+        # 删除远程文件夹
+        - ssh root@172.28.200.193 rm -rf $REMOTE_FULL_PATH
+        # 复制到目标服务器目录
+        - scp -r ./dist root@172.28.200.193:$REMOTE_FULL_PATH
+        # 消息提醒
+        - /opt/webhook/webhook_qywx.sh $SYS_NAME$ENV_NAME部署成功\\n[$ENV_URL]\($ENV_URL\)\\n\`\`\`\\n$COMMIT_MSG\\n\`\`\`
+
+生产环境:
+    stage: build
+    variables:
+        ENV_NAME: 生产环境
+        ENV_URL: "https://finderweb.yunyesoft.com/finder"
+    tags:
+        - prod
+    only:
+        - master
+    environment:
+        name: prod
+        url: $ENV_URL
+    script:
+        - export ENV_PROJECT=default&&export ENV_ENVJS=env.production.js&&export ENV_HASH=1&&export ENV_SPLIT=1&&export ENV_ZIP=1
+        - npm run build
+        # 备份上个版本zip包
+        - if [ -f $REMOTE_FULL_PATH.zip ]; then mv $REMOTE_FULL_PATH.zip $REMOTE_FULL_PATH-`date +%y-%m-%d_%H:%M:%S`.zip; fi
+        # 删除当前版本文件夹
+        - if [ -d $REMOTE_FULL_PATH ]; then rm -rf $REMOTE_FULL_PATH; fi
+        # 生成当前版本文件夹和zip包
+        - mv ./dist $FOLDER_NAME&&zip -qr $FOLDER_NAME.zip $FOLDER_NAME
+        # 移动文件夹和zip包
+        - mv -f $FOLDER_NAME $REMOTE_FOLDER/&&mv -f $FOLDER_NAME.zip $REMOTE_FOLDER/
+        # 消息提醒
+        - /opt/webhook/webhook_qywx.sh $SYS_NAME$ENV_NAME构建成功\\n[$ENV_URL]\($ENV_URL\)\\n\`\`\`\\n$COMMIT_MSG\\n\`\`\`

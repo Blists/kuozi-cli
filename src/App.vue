@@ -39,6 +39,15 @@ export default {
 .back-enter-active,
 .back-leave-active {
     transition: opacity @time, transform @time;
+    &::after {
+        content: "";
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        background: rgba(0, 0, 0, 0);
+    }
 }
 .forward-enter,
 .back-leave-active {
